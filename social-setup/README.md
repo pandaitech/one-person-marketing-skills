@@ -5,12 +5,13 @@ Skill untuk sambung app developer anda sendiri ke **Facebook, Instagram, Threads
 ## Macam mana ia jalan
 
 1. Anda minta AI (contohnya "sambung TikTok saya") dalam AI app yang boleh jalankan command di komputer anda -- app desktop Claude (Cowork/Code), Claude Code, Codex, atau ChatGPT dengan Codex.
-2. AI jalankan satu skrip tempatan: `python3 scripts/setup.py tiktok` (Windows: `py scripts/setup.py tiktok`).
-3. Skrip buka **satu tab browser di komputer anda** -- satu wizard step-by-step dalam Bahasa Melayu, dengan butang "Buka page ini" untuk setiap page console yang perlu.
-4. **Anda** tampal App ID / Client Key / Secret / token terus dalam wizard tu. Nilai ni **tak pernah** masuk chat AI atau dihantar ke mana-mana selain server platform berkenaan (Meta / TikTok / Google).
-5. Wizard sahkan setiap nilai dengan satu panggilan API ringkas (baca sahaja, tak ubah apa-apa) dan tunjuk hijau/merah dengan sebab kalau gagal.
-6. Bila semua hijau, klik **Sahkan & Simpan**. Wizard simpan ke `~/.pandaitech/social/credentials.json` di komputer anda sahaja, dan wizard tamat.
-7. AI baca ringkasan (tiada token/secret) dan beritahu anda 2-3 ayat: apa yang berjaya, dan bila token akan luput.
+2. Untuk Meta, AI tanya dulu: **manual** (anda klik sendiri, AI pandu langkah demi langkah, jimat token) atau **auto** (AI buat sendiri guna computer use, lebih banyak token). Dua-dua mod berakhir di wizard untuk anda tampal token.
+3. AI jalankan satu skrip tempatan: `python3 scripts/setup.py tiktok` (Windows: `py scripts/setup.py tiktok`).
+4. Skrip buka **satu tab browser di komputer anda** -- satu wizard step-by-step dalam Bahasa Melayu, dengan butang "Buka page ini" untuk setiap page console yang perlu.
+5. **Anda** tampal App ID / Client Key / Secret / token terus dalam wizard tu. Nilai ni **tak pernah** masuk chat AI atau dihantar ke mana-mana selain server platform berkenaan (Meta / TikTok / Google).
+6. Wizard sahkan setiap nilai dengan satu panggilan API ringkas (baca sahaja, tak ubah apa-apa) dan tunjuk hijau/merah dengan sebab kalau gagal.
+7. Bila semua hijau, klik **Sahkan & Simpan**. Wizard simpan ke `~/.pandaitech/social/credentials.json` di komputer anda sahaja, dan wizard tamat.
+8. AI baca ringkasan (tiada token/secret) dan beritahu anda 2-3 ayat: apa yang berjaya, dan bila token akan luput.
 
 ## Kalau AI anda tak boleh jalankan command
 

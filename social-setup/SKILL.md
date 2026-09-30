@@ -1,27 +1,44 @@
 ---
 name: social-setup
-description: Bantu pelajar sambung app developer sosial media mereka sendiri (Meta untuk Facebook/Instagram/Threads, TikTok, YouTube) di komputer mereka sendiri, dengan jalankan wizard tempatan -- guna token AI paling sikit. Guna bila pengguna mahu "sambung", "setup" atau "connect" Facebook, Instagram, Threads, TikTok atau YouTube. Requires an AI app that can run shell commands on the user's own computer.
+description: Bantu pelajar sambung app developer sosial media mereka sendiri (Meta untuk Facebook/Instagram/Threads, TikTok, YouTube) di komputer mereka sendiri, dengan pilihan mod manual (AI pandu, pengguna klik) atau auto (AI guna computer use), dan wizard tempatan untuk tampal token. Guna bila pengguna mahu "sambung", "setup" atau "connect" Facebook, Instagram, Threads, TikTok atau YouTube. Requires an AI app that can run shell commands on the user's own computer.
 ---
 
 # Social Setup
 
-Skill ini sambungkan app developer pengguna sendiri (bukan app PandaiTech) ke tiga platform: **Meta** (Facebook + Instagram + Threads), **TikTok**, **YouTube**. Semua kerja sebenar -- buka console, isi borang, tampal token, log masuk OAuth, sahkan credential -- berlaku dalam **wizard tempatan** yang jalan di komputer pengguna sendiri, bukan dalam chat ini.
+Skill ini sambungkan app developer pengguna sendiri (bukan app PandaiTech) ke tiga platform: **Meta** (Facebook + Instagram + Threads), **TikTok**, **YouTube**. Token, secret dan log masuk OAuth dimasukkan dalam **wizard tempatan** yang jalan di komputer pengguna sendiri, bukan dalam chat ini.
 
-Peranan AI di sini sangat kecil: **jalankan skrip, tunggu, relay satu baris ringkasan.** Jangan cuba jalankan langkah-langkah setup sendiri dalam chat.
+Untuk Meta, AI tanya dulu mod **manual** (pengguna klik sendiri, AI pandu dalam chat) atau **auto** (AI buat guna computer use). Dua-dua mod berakhir dengan wizard tempatan untuk tampal token, supaya token tak pernah lalui chat.
 
 ## Keperluan
 
-Skill ini perlukan AI app yang boleh jalankan command di komputer pengguna (contoh: app desktop Claude dengan Cowork/Code, Claude Code, Codex, ChatGPT dengan Codex). Kalau anda sedang jalan dalam **claude.ai web** atau chat biasa yang tak boleh jalankan command, **jangan cuba** jalankan skrip ini. Beritahu pengguna dengan jujur dan arahkan mereka ke panduan manual di halaman kursus (guide yang sepadan: `02-meta-app-fb-ig-threads.md`, `03-tiktok.md`, atau `04-youtube.md`).
+Skill ini perlukan AI app yang boleh jalankan command di komputer pengguna (contoh: app desktop Claude dengan Cowork/Code, Claude Code, Codex, ChatGPT dengan Codex). Kalau anda sedang jalan dalam **claude.ai web** atau chat biasa yang tak boleh jalankan command, **jangan cuba** jalankan skrip ini (mod manual untuk langkah console masih boleh dipandu, tapi token perlu disimpan ikut panduan manual). Beritahu pengguna dengan jujur dan arahkan mereka ke panduan manual di halaman kursus (guide yang sepadan: `02-meta-app-fb-ig-threads.md`, `03-tiktok.md`, atau `04-youtube.md`).
 
 ## Cara guna
 
-1. Tentukan platform daripada permintaan pengguna: `meta` (Facebook/Instagram/Threads), `tiktok`, atau `youtube`. Kalau tak pasti, tanya.
+### Langkah 1: tanya mod (Meta)
+
+Untuk Meta (Facebook/Instagram/Threads), sebelum buat apa-apa, tanya pengguna **satu soalan** dengan dua pilihan:
+
+> Nak setup macam mana?
+> 1. **Manual**: anda klik sendiri, saya pandu langkah demi langkah. Jimat token.
+> 2. **Auto**: saya buat sendiri guna computer use, anda cuma login dan tampal token di akhir. Guna lebih banyak token.
+
+Tunggu jawapan. Jangan mula sebelum pengguna pilih.
+
+- **Manual:** ikut `references/meta-manual.md`. Pandu satu langkah pada satu masa dalam chat, tunggu "siap" sebelum langkah seterusnya. Pada langkah akhir, jalankan wizard (di bawah) untuk pengguna tampal token.
+- **Auto:** ikut `references/meta-auto.md`. Kalau AI app ini tiada computer use, beritahu pengguna dan tawarkan mod manual.
+
+Untuk TikTok dan YouTube, terus ke langkah akhir: wizard dah ada langkah console dan log masuk OAuth.
+
+### Langkah akhir: wizard untuk masukkan token
+
+1. Tentukan platform: `meta` (Facebook/Instagram/Threads), `tiktok`, atau `youtube`. Kalau tak pasti, tanya.
 2. Jalankan (dalam background kalau tool anda sokong long-running command, kalau tidak jalankan foreground):
    ```
    python3 scripts/setup.py <platform>
    ```
    Windows: `py scripts/setup.py <platform>`
-3. Beritahu pengguna: **"Wizard dah dibuka dalam browser anda, ikut langkah di situ."**
+3. Beritahu pengguna: **"Wizard dah dibuka dalam browser anda. Tampal nilai dalam kotak di bawah dan klik Sahkan & Simpan."** (Meta mod manual/auto: pengguna dah siap langkah console, jadi boleh terus ke kotak.)
 4. Tunggu skrip selesai. Ia akan tamat sendiri bila pengguna klik selesai, batal, atau selepas 30 minit tanpa tindakan.
 5. Skrip cetak **satu baris JSON** ke stdout (platform, status, apa yang disahkan, tarikh luput -- tiada secret). Relay dalam **2 hingga 3 ayat Bahasa Melayu**, contohnya:
    > Facebook + Instagram + Threads berjaya disambung. Semua token disahkan aktif. Token Threads luput 29 November -- jalankan wizard ni semula sebelum tarikh tu untuk refresh.

@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""Local wizard that connects a student's own Meta / TikTok / YouTube developer
-app. Standard library only -- no pip installs, runs on macOS and Windows.
+"""Local wizard that connects a student's own Meta (Facebook, Instagram,
+Threads) developer app. Standard library only -- no pip installs, runs on
+macOS and Windows.
 
 Usage:
     python3 scripts/setup.py meta
-    python3 scripts/setup.py tiktok
-    python3 scripts/setup.py youtube
     python3 scripts/setup.py check
     py scripts/setup.py meta            (Windows)
 
@@ -29,22 +28,20 @@ DEFAULT_TIMEOUT_MIN = 30
 
 VERIFY_FUNCS = {
     "meta": verify.verify_meta,
-    "tiktok": verify.verify_tiktok,
-    "youtube": verify.verify_youtube,
 }
 
 
 def run_wizard(platform, port, no_browser, timeout_min):
     preferred = port or DEFAULT_PORT
     try:
-        actual_port = server.find_port(preferred, must_match_preferred=(platform == "tiktok"))
+        actual_port = server.find_port(preferred)
     except RuntimeError as exc:
         print(json.dumps({"platform": platform, "status": "error", "error": str(exc)}))
         return 1
 
     state = server.WizardState(platform, actual_port, no_browser)
     httpd, thread = server.run_server(state)
-    url = f"http://{'localhost' if platform == 'tiktok' else '127.0.0.1'}:{actual_port}/"
+    url = f"http://127.0.0.1:{actual_port}/"
 
     if not no_browser:
         webbrowser.open(url)
@@ -95,9 +92,9 @@ def run_check():
 def main(argv=None):
     parser = argparse.ArgumentParser(
         prog="setup.py",
-        description="Wizard tempatan untuk sambung akaun Meta, TikTok atau YouTube.",
+        description="Wizard tempatan untuk sambung akaun Meta (Facebook, Instagram, Threads).",
     )
-    parser.add_argument("platform", choices=["meta", "tiktok", "youtube", "check"],
+    parser.add_argument("platform", choices=["meta", "check"],
                          help="Platform untuk disambung, atau 'check' untuk sahkan semua yang tersimpan.")
     parser.add_argument("--no-browser", action="store_true",
                          help="Jangan buka browser secara automatik (untuk ujian).")

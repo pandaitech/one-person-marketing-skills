@@ -13,13 +13,15 @@ from lib import store  # noqa: E402
 
 
 class MergeTests(unittest.TestCase):
-    def test_merge_adds_new_platform_without_touching_others(self):
-        existing = {"meta": {"page_id": "123"}}
-        merged = store.merge_platform_credentials(existing, "tiktok", {"client_key": "abc"})
+    def test_merge_adds_meta_without_touching_unrelated_existing_key(self):
+        # "other_app" isn't a platform this skill knows about, but merge must
+        # never drop data the credentials file already holds for other keys.
+        existing = {"other_app": {"api_key": "unrelated"}}
+        merged = store.merge_platform_credentials(existing, "meta", {"page_id": "123"})
+        self.assertEqual(merged["other_app"], {"api_key": "unrelated"})
         self.assertEqual(merged["meta"], {"page_id": "123"})
-        self.assertEqual(merged["tiktok"], {"client_key": "abc"})
         # original dict must not be mutated
-        self.assertNotIn("tiktok", existing)
+        self.assertNotIn("meta", existing)
 
     def test_merge_updates_fields_without_wiping_siblings(self):
         existing = {"meta": {"page_id": "123", "fb_ig_token": "old-token"}}
@@ -28,8 +30,8 @@ class MergeTests(unittest.TestCase):
         self.assertEqual(merged["meta"]["fb_ig_token"], "new-token")
 
     def test_merge_from_empty(self):
-        merged = store.merge_platform_credentials({}, "youtube", {"client_id": "x"})
-        self.assertEqual(merged, {"youtube": {"client_id": "x"}})
+        merged = store.merge_platform_credentials({}, "meta", {"page_id": "x"})
+        self.assertEqual(merged, {"meta": {"page_id": "x"}})
 
 
 class ExpiryTests(unittest.TestCase):
@@ -98,13 +100,21 @@ class ReadWriteTests(unittest.TestCase):
             self.assertEqual(mode, 0o600)
 
     def test_write_merge_roundtrip(self):
-        store.write_credentials({"meta": {"page_id": "123"}})
+        store.write_credentials({"other_app": {"api_key": "unrelated"}})
         existing = store.read_credentials()
-        merged = store.merge_platform_credentials(existing, "tiktok", {"client_key": "abc"})
+        merged = store.merge_platform_credentials(existing, "meta", {"page_id": "123"})
         store.write_credentials(merged)
         reloaded = store.read_credentials()
+        self.assertEqual(reloaded["other_app"]["api_key"], "unrelated")
         self.assertEqual(reloaded["meta"]["page_id"], "123")
-        self.assertEqual(reloaded["tiktok"]["client_key"], "abc")
+
+
+class SetupArgparseTests(unittest.TestCase):
+    def test_rejects_tiktok_platform_choice(self):
+        import setup  # noqa: E402 - imported here so sys.path is already set up
+
+        with self.assertRaises(SystemExit):
+            setup.main(["tiktok"])
 
 
 if __name__ == "__main__":

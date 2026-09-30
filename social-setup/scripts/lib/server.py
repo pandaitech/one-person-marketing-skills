@@ -1,6 +1,6 @@
-"""Local wizard HTTP server: one page, a small JSON API, and the two OAuth
-callback routes. Single-threaded http.server — this is a one-student,
-one-browser-tab tool, not a public service.
+"""Local wizard HTTP server: one page and a small JSON API. Single-threaded
+http.server — this is a one-student, one-browser-tab tool, not a public
+service.
 """
 import datetime
 import json
@@ -11,30 +11,22 @@ import threading
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-from . import oauth, platforms, store, verify
+from . import platforms, store, verify
 
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "assets")
 
 VERIFY_FUNCS = {
     "meta": verify.verify_meta,
-    "tiktok": verify.verify_tiktok,
-    "youtube": verify.verify_youtube,
 }
 
 # Credential expiry the wizard can state up front (None = unknown/no expiry).
 EXPIRY_DAYS = {
     "meta": {"threads_token": 60},
-    "youtube": {"refresh_token": 7},  # only while the Cloud project is in Testing mode
 }
 
 
-def find_port(preferred, must_match_preferred=False):
-    """Return a free TCP port on 127.0.0.1, preferring `preferred`.
-
-    TikTok's redirect URI is fixed in the console (http://localhost:8765/callback),
-    so for that flow the port cannot float — must_match_preferred=True makes this
-    raise instead of silently picking a different port.
-    """
+def find_port(preferred):
+    """Return a free TCP port on 127.0.0.1, preferring `preferred`."""
     def is_free(port):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             try:
@@ -45,12 +37,6 @@ def find_port(preferred, must_match_preferred=False):
 
     if is_free(preferred):
         return preferred
-    if must_match_preferred:
-        raise RuntimeError(
-            f"Port {preferred} sedang digunakan. TikTok perlukan redirect URI tetap "
-            f"(http://localhost:{preferred}/callback per guide). Tutup program yang guna "
-            f"port {preferred} dan cuba lagi."
-        )
     for port in range(preferred + 1, preferred + 50):
         if is_free(port):
             return port
@@ -63,20 +49,11 @@ class WizardState:
         self.port = port
         self.no_browser = no_browser
         self.lock = threading.Lock()
-        self.oauth_state = None
-        self.pending_keys = {}  # client_key/client_secret or client_id/client_secret, held in memory only
-        self.oauth_tokens = {}  # access_token/refresh_token, held in memory only
+        self.pending_keys = {}  # fields the browser has POSTed so far, held in memory only
         self.finished = threading.Event()
         self.cancelled = threading.Event()
         self.timed_out = threading.Event()
         self.final_summary = None
-
-
-def _redirect_uri(state):
-    cfg = platforms.get(state.platform)
-    oauth_cfg = cfg.get("oauth")
-    host = "localhost" if state.platform == "tiktok" else "127.0.0.1"
-    return f"http://{host}:{state.port}{oauth_cfg['callback_path']}"
 
 
 def make_handler(state):
@@ -155,22 +132,12 @@ def make_handler(state):
         def do_GET(self):
             if not self._guard(write=self.path.startswith("/api/")):
                 return
-            parsed = urllib.parse.urlparse(self.path)
-            path = parsed.path
-            query = dict(urllib.parse.parse_qsl(parsed.query))
+            path = urllib.parse.urlparse(self.path).path
 
             if path == "/":
                 self._render_index()
             elif path.startswith("/assets/"):
                 self._serve_static(path[len("/assets/"):])
-            elif path == "/tiktok/authorize" and state.platform == "tiktok":
-                self._start_oauth(query)
-            elif path == "/youtube/authorize" and state.platform == "youtube":
-                self._start_oauth(query)
-            elif path == "/callback" and state.platform == "tiktok":
-                self._handle_callback(query)
-            elif path == "/oauth/callback" and state.platform == "youtube":
-                self._handle_callback(query)
             elif path == "/api/cancel":
                 state.cancelled.set()
                 self._send_json({"ok": True})
@@ -206,32 +173,17 @@ def make_handler(state):
             with state.lock:
                 for k, v in state.pending_keys.items():
                     fields.setdefault(k, v)
-                for k, v in state.oauth_tokens.items():
-                    fields.setdefault(k, v)
             return fields
 
         def _render_index(self):
             cfg = platforms.get(state.platform)
-            redirect_uri = _redirect_uri(state) if cfg.get("oauth") else None
-            steps = []
-            for step in cfg["steps"]:
-                body = step["body"]
-                if redirect_uri and "{redirect_uri}" in body:
-                    body = body.format(redirect_uri=redirect_uri)
-                steps.append({**step, "body": body})
-
-            with state.lock:
-                oauth_done_flag = bool(state.oauth_tokens)
 
             wizard_config = {
                 "platform": state.platform,
                 "title": cfg["title"],
                 "subtitle": cfg["subtitle"],
                 "fields": cfg["fields"],
-                "steps": steps,
-                "oauth": cfg.get("oauth"),
-                "redirect_uri": redirect_uri,
-                "oauth_done": oauth_done_flag,
+                "steps": cfg["steps"],
             }
 
             template_path = os.path.join(ASSETS_DIR, "wizard.html")
@@ -240,57 +192,6 @@ def make_handler(state):
             config_json = json.dumps(wizard_config).replace("</script", "<\\/script")
             html = html.replace("__WIZARD_CONFIG__", config_json)
             self._send_html(html)
-
-        def _start_oauth(self, query):
-            cfg = platforms.get(state.platform)
-            oauth_cfg = cfg["oauth"]
-            redirect_uri = _redirect_uri(state)
-            new_state_value = oauth.new_state()
-            with state.lock:
-                state.oauth_state = new_state_value
-                key_field = "client_key" if state.platform == "tiktok" else "client_id"
-                client_id_value = state.pending_keys.get(key_field, "")
-
-            if not client_id_value:
-                self._send_redirect("/?error=missing_keys")
-                return
-
-            if state.platform == "tiktok":
-                url = oauth.tiktok_authorize_url(client_id_value, redirect_uri, oauth_cfg["scopes"], new_state_value)
-            else:
-                url = oauth.google_authorize_url(client_id_value, redirect_uri, oauth_cfg["scopes"], new_state_value)
-            self._send_redirect(url)
-
-        def _handle_callback(self, query):
-            code = query.get("code")
-            returned_state = query.get("state")
-            with state.lock:
-                expected_state = state.oauth_state
-                client_key = state.pending_keys.get("client_key") or state.pending_keys.get("client_id")
-                client_secret = state.pending_keys.get("client_secret")
-
-            if not code or not returned_state or returned_state != expected_state:
-                self._send_redirect(f"/?{state.platform}=error")
-                return
-
-            redirect_uri = _redirect_uri(state)
-            if state.platform == "tiktok":
-                ok, body, err = verify.tiktok_exchange_code(client_key, client_secret, code, redirect_uri)
-            else:
-                ok, body, err = verify.youtube_exchange_code(client_key, client_secret, code, redirect_uri)
-
-            if ok and isinstance(body, dict) and body.get("access_token"):
-                with state.lock:
-                    if state.platform == "tiktok":
-                        state.oauth_tokens["access_token"] = body.get("access_token", "")
-                        if body.get("refresh_token"):
-                            state.oauth_tokens["refresh_token"] = body["refresh_token"]
-                    else:
-                        if body.get("refresh_token"):
-                            state.oauth_tokens["refresh_token"] = body["refresh_token"]
-                self._send_redirect(f"/?{state.platform}=done")
-            else:
-                self._send_redirect(f"/?{state.platform}=error")
 
         def _handle_save(self, submitted_fields):
             fields = self._current_fields(submitted_fields)
@@ -314,9 +215,7 @@ def make_handler(state):
             store.write_credentials(merged)
 
             renew_hint = None
-            if state.platform == "youtube":
-                renew_hint = "Jalankan wizard semula sebelum tamat untuk dapatkan token baharu."
-            elif state.platform == "meta":
+            if state.platform == "meta":
                 renew_hint = "Generate token Threads baharu di langkah 6 sebelum tamat."
 
             summary = store.build_summary(state.platform, checks, expiry=expiry, renew_hint=renew_hint)
@@ -330,7 +229,7 @@ def make_handler(state):
 
 def run_server(state):
     handler_cls = make_handler(state)
-    httpd = HTTPServer(("127.0.0.1" if state.platform != "tiktok" else "localhost", state.port), handler_cls)
+    httpd = HTTPServer(("127.0.0.1", state.port), handler_cls)
     thread = threading.Thread(target=httpd.serve_forever, daemon=True)
     thread.start()
     return httpd, thread

@@ -12,7 +12,7 @@ Tujuh skill Bahasa Melayu untuk pelajar kursus **One-Person Marketing Team** ole
 | `meta-ads-strategist` | 02.2 | Belum ada data iklan? Rancang campaign pertama: objective, 3 angle, struktur test dan bajet. |
 | `meta-ads-analyst` | 02.1, 02.7 | Belajar daripada data 90 hari, dan tentukan setiap iklan: stop, tambah bajet, test angle sama, atau angle baru. |
 | `meta-ads-daily-report` | 02.8 | Laporan iklan setiap pagi ke Google Sheets, dengan cadangan tindakan. |
-| `social-setup` | Setup 3 | Sambung app developer anda sendiri ke Facebook, Instagram, Threads, TikTok dan YouTube melalui wizard di komputer anda. Token tak pernah masuk chat. Perlukan AI app yang boleh jalankan command (contohnya Claude Code, Codex, app desktop Claude). |
+| `social-setup` | Setup 3 | Sambung app developer Meta anda sendiri (Facebook, Instagram, Threads) melalui wizard di komputer anda. Untuk TikTok dan YouTube, guna Post-bridge atau Postiz. Token tak pernah masuk chat. Perlukan AI app yang boleh jalankan command (contohnya Claude Code, Codex, app desktop Claude). |
 
 Mula dengan `marketing-brain`. Semua skill lain membaca `marketing-brain.md` dalam Project anda.
 

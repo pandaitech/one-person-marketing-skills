@@ -78,56 +78,12 @@
       form.appendChild(field);
     });
 
-    if (config.oauth) {
-      var area = document.getElementById("oauth-area");
-      area.hidden = false;
-      var label = config.platform === "tiktok" ? "Log masuk TikTok" : "Log masuk Google";
-      var btn = document.getElementById("oauth-btn");
-      btn.textContent = label;
-      btn.addEventListener("click", startOAuth);
-      if (config.oauth_done) {
-        document.getElementById("oauth-status").textContent = "Log masuk berjaya. Sahkan & simpan di bawah.";
-      }
-    }
-
     document.getElementById("verify-btn").addEventListener("click", function () {
       runCheck("/api/verify", false);
     });
     document.getElementById("save-btn").addEventListener("click", function () {
       runCheck("/api/save", true);
     });
-
-    handleOAuthReturn();
-  }
-
-  function startOAuth() {
-    var fields = currentFields();
-    var keyField = config.platform === "tiktok" ? "client_key" : "client_id";
-    var secretField = "client_secret";
-    if (!fields[keyField] || !fields[secretField]) {
-      document.getElementById("oauth-status").textContent =
-        "Isi " + keyField + " dan " + secretField + " dahulu sebelum log masuk.";
-      return;
-    }
-    saveDraft(fields);
-    fetch("/api/keys", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fields: fields }),
-    }).then(function () {
-      window.location.href = config.oauth.authorize_path;
-    });
-  }
-
-  function handleOAuthReturn() {
-    var params = new URLSearchParams(window.location.search);
-    var status = params.get(config.platform);
-    var statusEl = document.getElementById("oauth-status");
-    if (status === "done") {
-      statusEl.textContent = "Log masuk berjaya. Klik 'Sahkan & Simpan' di bawah.";
-    } else if (status === "error") {
-      statusEl.textContent = "Log masuk gagal. Cuba klik 'Log masuk' semula.";
-    }
   }
 
   function runCheck(endpoint, isSave) {

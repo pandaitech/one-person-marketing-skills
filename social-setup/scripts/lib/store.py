@@ -13,7 +13,7 @@ from datetime import datetime, timedelta, timezone
 APP_DIR_PARTS = (".pandaitech", "social")
 CREDENTIALS_FILENAME = "credentials.json"
 
-PLATFORMS = ("meta", "tiktok", "youtube")
+PLATFORMS = ("meta",)
 
 
 def credentials_dir():

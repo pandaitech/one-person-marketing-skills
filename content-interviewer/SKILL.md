@@ -30,6 +30,8 @@ Tanya satu soalan pembuka. Kalau brain ada content pillar, tawarkan sebagai pili
 
 > Nak cerita pasal apa hari ni? Contohnya [pillar 1], [pillar 2] atau [pillar 3] daripada brain anda — atau topik lain yang anda rasa nak kongsi.
 
+**Topik daripada artikel atau berita (A tier).** Kalau pengguna beri link atau tampal artikel, berita, kajian atau pengumuman: baca dulu, ringkaskan 3 fakta utama dengan sumber (tanpa tambah apa-apa yang tiada dalam artikel), kemudian temu bual untuk dapatkan **pandangan pengguna**: setuju atau tidak dan kenapa, apa maksudnya untuk pelanggan mereka, pengalaman sendiri yang berkaitan. Dalam output, kredit sumber, jangan salin ayat artikel, dan pastikan sekurang-kurangnya separuh setiap draf ialah pandangan pengguna.
+
 Kalau brain tiada content pillar atau pengguna tak pasti, cadangkan 3 topik berdasarkan bisnes/produk dalam brain (contohnya satu cerita permulaan, satu kesilapan yang dibuat, satu soalan pelanggan yang selalu ditanya) dan biar pengguna pilih.
 
 ## Langkah 3: Temu bual, satu soalan pada satu masa

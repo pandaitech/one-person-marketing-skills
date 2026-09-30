@@ -36,7 +36,7 @@ Sebelum apa-apa mod, baca `marketing-brain.md` dari Project — khusus bahagian 
 2. **Bina struktur tab** ikut `references/sheet-format.md` dengan tepat — nama tab, susunan lajur dan format setiap lajur. Tab `Harian` satu baris setiap iklan setiap hari; tab `Ringkasan` satu baris setiap hari.
    - Kalau connector Sheets ada: cipta/kemas kini sheet terus.
    - Kalau tiada: beri jadual markdown struktur tu untuk pengguna cipta sendiri, dan sebut ini fallback.
-3. **Beri prompt Task 2.** Salin templat dari `references/prompt-task.md` (Task 2 "Laporan iklan", 7:00 pagi waktu Malaysia). Kalau pengguna sebut dah kena had 5 task (lesson 01.7), beri variant gabungan "Satu task, banyak kerja" dari fail yang sama dan terangkan ia gabung Task 1 (content) + Task 2 (laporan) dalam satu task harian dengan dua bahagian arahan.
+3. **Beri prompt Task 2.** Salin templat dari `references/prompt-task.md` (Task 2 "Laporan iklan", 7:00 pagi waktu Malaysia). Kalau pengguna sebut dah kena had 5 task (lesson 01.9), beri variant gabungan "Satu task, banyak kerja" dari fail yang sama dan terangkan ia gabung Task 1 (content) + Task 2 (laporan) dalam satu task harian dengan dua bahagian arahan.
 4. **Suruh test-run sekali.** Minta pengguna jalankan task itu secara manual sekali (butang "Run now" dalam ChatGPT) sebelum bergantung padanya esok pagi. Sahkan baris pertama masuk dengan betul dalam Sheet sebelum tutup sesi setup.
 
 ## Mod Laporan Harian (setiap kali dijalankan)

@@ -6,9 +6,9 @@ Enam skill Bahasa Melayu untuk pelajar kursus **One-Person Marketing Team** oleh
 
 | Skill | Lesson | Apa yang ia buat |
 |---|---|---|
-| `marketing-brain` | Setup 2, 01.10 | Temu bual anda, bina `marketing-brain.md` (brand, produk, audience, content, iklan), dan kemas kini pengajaran setiap minggu. Ada panel setup dan paparan brain. |
-| `content-interviewer` | 01.3 | Temu bual anda tentang pengalaman dan pendapat anda, jadikan bahan content original. |
-| `content-repurposer` | 01.4, 01.5, 01.6 | Satu rakaman atau content jadi 10 video pendek, carousel Instagram, post Threads dan newsletter. |
+| `marketing-brain` | Setup 2, 01.11 | Temu bual anda, bina `marketing-brain.md` (brand, produk, audience, content, iklan), dan kemas kini pengajaran setiap minggu. Ada panel setup dan paparan brain. |
+| `content-interviewer` | 01.5 | Temu bual anda tentang pengalaman dan pendapat anda, jadikan bahan content original. |
+| `content-repurposer` | 01.6, 01.7, 01.8 | Satu rakaman atau content jadi 10 video pendek, carousel Instagram, post Threads dan newsletter. |
 | `meta-ads-strategist` | 02.2 | Belum ada data iklan? Rancang campaign pertama: objective, 3 angle, struktur test dan bajet. |
 | `meta-ads-analyst` | 02.1, 02.7 | Belajar daripada data 90 hari, dan tentukan setiap iklan: stop, tambah bajet, test angle sama, atau angle baru. |
 | `meta-ads-daily-report` | 02.8 | Laporan iklan setiap pagi ke Google Sheets, dengan cadangan tindakan. |

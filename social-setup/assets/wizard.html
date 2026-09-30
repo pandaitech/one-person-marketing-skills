@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PandaiTech - Sambung akaun</title>
+<link rel="stylesheet" href="/assets/wizard.css">
+</head>
+<body>
+<div id="app" class="app">
+  <header class="app-header">
+    <div class="brand">PandaiTech</div>
+    <h1 id="title">Memuatkan...</h1>
+    <p id="subtitle" class="subtitle"></p>
+  </header>
+
+  <main>
+    <section id="steps" class="steps"></section>
+
+    <section class="form-card">
+      <h2>Tampal nilai yang anda salin</h2>
+      <form id="fields-form"></form>
+
+      <div id="oauth-area" class="oauth-area" hidden>
+        <button id="oauth-btn" type="button" class="btn btn-secondary"></button>
+        <p id="oauth-status" class="hint"></p>
+      </div>
+
+      <div class="actions">
+        <button id="verify-btn" type="button" class="btn btn-outline">Sahkan</button>
+        <button id="save-btn" type="button" class="btn btn-primary">Sahkan &amp; Simpan</button>
+      </div>
+    </section>
+
+    <section id="results" class="results" hidden>
+      <h2>Keputusan</h2>
+      <ul id="checks-list" class="checks-list"></ul>
+      <p id="result-note" class="hint"></p>
+    </section>
+
+    <section id="done-banner" class="done-banner" hidden>
+      <p>Tersimpan! Boleh tutup tab ini dan kembali ke chat.</p>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>Kunci dan token ditaip terus di sini, dan disimpan hanya di komputer anda
+       (<code>~/.pandaitech/social/credentials.json</code>). Ia tidak dihantar ke chat AI.</p>
+  </footer>
+</div>
+
+<script id="wizard-config" type="application/json">__WIZARD_CONFIG__</script>
+<script src="/assets/wizard.js"></script>
+</body>
+</html>

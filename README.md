@@ -1,6 +1,6 @@
 # One-Person Marketing Skills
 
-Enam skill Bahasa Melayu untuk pelajar kursus **One-Person Marketing Team** oleh PandaiTech. Skill ini jadikan ChatGPT atau Claude sebagai pasukan marketing anda: bina Marketing Brain, hasilkan content daripada satu sumber, dan urus Meta Ads dengan data.
+Tujuh skill Bahasa Melayu untuk pelajar kursus **One-Person Marketing Team** oleh PandaiTech. Skill ini jadikan ChatGPT atau Claude sebagai pasukan marketing anda: bina Marketing Brain, hasilkan content daripada satu sumber, dan urus Meta Ads dengan data.
 
 ## Skill
 
@@ -12,6 +12,7 @@ Enam skill Bahasa Melayu untuk pelajar kursus **One-Person Marketing Team** oleh
 | `meta-ads-strategist` | 02.2 | Belum ada data iklan? Rancang campaign pertama: objective, 3 angle, struktur test dan bajet. |
 | `meta-ads-analyst` | 02.1, 02.7 | Belajar daripada data 90 hari, dan tentukan setiap iklan: stop, tambah bajet, test angle sama, atau angle baru. |
 | `meta-ads-daily-report` | 02.8 | Laporan iklan setiap pagi ke Google Sheets, dengan cadangan tindakan. |
+| `social-setup` | Setup 3 | Sambung app developer anda sendiri ke Facebook, Instagram, Threads, TikTok dan YouTube melalui wizard di komputer anda. Token tak pernah masuk chat. Perlukan AI app yang boleh jalankan command (contohnya Claude Code, Codex, app desktop Claude). |
 
 Mula dengan `marketing-brain`. Semua skill lain membaca `marketing-brain.md` dalam Project anda.
 
@@ -27,12 +28,12 @@ AI akan baca arahan di bawah dan pasang semua skill. Kalau AI anda tidak boleh m
 
 Pengguna mahu memasang **semua** skill dalam repo ini ke direktori skill peribadi mereka.
 
-1. Setiap folder di akar repo yang mengandungi `SKILL.md` ialah satu skill. Senarai semasa: `marketing-brain`, `content-interviewer`, `content-repurposer`, `meta-ads-strategist`, `meta-ads-analyst`, `meta-ads-daily-report`. Semak repo untuk folder skill lain yang ditambah kemudian.
-2. Salin setiap folder skill **sepenuhnya dan tanpa ubah suai**, termasuk `references/`, `assets/` dan `examples/`. Nama folder mesti kekal sama dengan medan `name` dalam `SKILL.md`. Jangan salin `README.md`, `scripts/` atau fail di akar repo.
+1. Setiap folder di akar repo yang mengandungi `SKILL.md` ialah satu skill. Senarai semasa: `marketing-brain`, `content-interviewer`, `content-repurposer`, `meta-ads-strategist`, `meta-ads-analyst`, `meta-ads-daily-report`, `social-setup`. Semak repo untuk folder skill lain yang ditambah kemudian.
+2. Salin setiap folder skill **sepenuhnya dan tanpa ubah suai**, termasuk `references/`, `assets/` dan `examples/`. Nama folder mesti kekal sama dengan medan `name` dalam `SKILL.md`. Jangan salin `README.md`, `scripts/` atau fail lain di akar repo (folder `scripts/` dan `README.md` di dalam folder skill mesti disalin).
 3. Cara pasang, ikut apa yang anda boleh buat:
    - **Ada direktori skill peribadi yang anda boleh tulis** (contohnya ChatGPT Work, Codex, Claude Code `~/.claude/skills/`): muat turun setiap folder dari `https://github.com/pandaitech/one-person-marketing-skills/tree/main/<nama-skill>` dan simpan di sana.
    - **Boleh jalankan terminal:** `npx skills add pandaitech/one-person-marketing-skills`, atau `git clone` repo ini dan salin folder skill ke direktori skill.
-   - **Tidak boleh memasang skill sendiri** (contohnya claude.ai dan app Claude): beritahu pengguna dengan jujur, beri enam link `.zip` dalam jadual di bawah, dan terangkan langkah muat naik untuk app mereka.
+   - **Tidak boleh memasang skill sendiri** (contohnya claude.ai dan app Claude): beritahu pengguna dengan jujur, beri link `.zip` dalam jadual di bawah, dan terangkan langkah muat naik untuk app mereka.
 4. Selepas pasang, sahkan setiap skill ada `SKILL.md` dengan `name` dan `description`, kemudian beri pengguna senarai skill yang berjaya dipasang dan yang gagal (dengan sebab).
 5. Akhir sekali, beritahu pengguna: mulakan dengan `@marketing-brain` (atau "Bantu saya bina Marketing Brain") dalam Project baharu.
 
@@ -48,6 +49,7 @@ Muat turun fail `.zip` untuk setiap skill dari [Releases terkini](https://github
 | `meta-ads-strategist` | [meta-ads-strategist.zip](https://github.com/pandaitech/one-person-marketing-skills/releases/latest/download/meta-ads-strategist.zip) |
 | `meta-ads-analyst` | [meta-ads-analyst.zip](https://github.com/pandaitech/one-person-marketing-skills/releases/latest/download/meta-ads-analyst.zip) |
 | `meta-ads-daily-report` | [meta-ads-daily-report.zip](https://github.com/pandaitech/one-person-marketing-skills/releases/latest/download/meta-ads-daily-report.zip) |
+| `social-setup` | [social-setup.zip](https://github.com/pandaitech/one-person-marketing-skills/releases/latest/download/social-setup.zip) |
 
 Jangan unzip. Muat naik fail `.zip` terus.
 

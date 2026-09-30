@@ -15,7 +15,28 @@ Enam skill Bahasa Melayu untuk pelajar kursus **One-Person Marketing Team** oleh
 
 Mula dengan `marketing-brain`. Semua skill lain membaca `marketing-brain.md` dalam Project anda.
 
-## Pasang
+## Pasang dengan chat (paling mudah)
+
+Buka ChatGPT atau Claude dan taip:
+
+> install skill https://github.com/pandaitech/one-person-marketing-skills
+
+AI akan baca arahan di bawah dan pasang semua skill. Kalau AI anda tidak boleh memasang skill sendiri, ia akan beri link `.zip`, dan anda ikut langkah **Pasang dengan fail .zip**.
+
+### Arahan untuk AI agent
+
+Pengguna mahu memasang **semua** skill dalam repo ini ke direktori skill peribadi mereka.
+
+1. Setiap folder di akar repo yang mengandungi `SKILL.md` ialah satu skill. Senarai semasa: `marketing-brain`, `content-interviewer`, `content-repurposer`, `meta-ads-strategist`, `meta-ads-analyst`, `meta-ads-daily-report`. Semak repo untuk folder skill lain yang ditambah kemudian.
+2. Salin setiap folder skill **sepenuhnya dan tanpa ubah suai**, termasuk `references/`, `assets/` dan `examples/`. Nama folder mesti kekal sama dengan medan `name` dalam `SKILL.md`. Jangan salin `README.md`, `scripts/` atau fail di akar repo.
+3. Cara pasang, ikut apa yang anda boleh buat:
+   - **Ada direktori skill peribadi yang anda boleh tulis** (contohnya ChatGPT Work, Codex, Claude Code `~/.claude/skills/`): muat turun setiap folder dari `https://github.com/pandaitech/one-person-marketing-skills/tree/main/<nama-skill>` dan simpan di sana.
+   - **Boleh jalankan terminal:** `npx skills add pandaitech/one-person-marketing-skills`, atau `git clone` repo ini dan salin folder skill ke direktori skill.
+   - **Tidak boleh memasang skill sendiri** (contohnya claude.ai dan app Claude): beritahu pengguna dengan jujur, beri enam link `.zip` dalam jadual di bawah, dan terangkan langkah muat naik untuk app mereka.
+4. Selepas pasang, sahkan setiap skill ada `SKILL.md` dengan `name` dan `description`, kemudian beri pengguna senarai skill yang berjaya dipasang dan yang gagal (dengan sebab).
+5. Akhir sekali, beritahu pengguna: mulakan dengan `@marketing-brain` (atau "Bantu saya bina Marketing Brain") dalam Project baharu.
+
+## Pasang dengan fail .zip
 
 Muat turun fail `.zip` untuk setiap skill dari [Releases terkini](https://github.com/pandaitech/one-person-marketing-skills/releases/latest):
 

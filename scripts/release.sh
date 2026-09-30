@@ -19,4 +19,5 @@ ls -l "$dist"
 
 git tag "$tag"
 git push origin "$tag"
-gh release create "$tag" "$dist"/*.zip --repo pandaitech/one-person-marketing-skills --title "$tag" ${notes:+--notes "$notes"} ${notes:---generate-notes}
+if [ -n "$notes" ]; then note_args=(--notes "$notes"); else note_args=(--generate-notes); fi
+gh release create "$tag" "$dist"/*.zip --repo pandaitech/one-person-marketing-skills --title "$tag" "${note_args[@]}"

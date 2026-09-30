@@ -27,7 +27,7 @@ Skill ini ada dua mod:
 
 Sebelum apa-apa mod, baca `marketing-brain.md` dari Project — khusus bahagian **6. Iklan**, medan **Sasaran kos**.
 
-- Kalau brain tiada, atau bahagian 6 masih `(belum pasti)`: beritahu pengguna, dan tanya satu soalan: *"Apakah sasaran kos per hasil (RM) anda? Contohnya RM15 untuk satu lead."* Guna nilai itu untuk sesi ini sahaja; cadangkan mereka masukkan ke brain (skill `marketing-brain`, mod Kemas kini) supaya skill lain juga nampak.
+- Kalau brain tiada, atau bahagian 6 masih `(belum pasti)`: beritahu pengguna, dan tanya satu soalan: *"Apakah sasaran kos per hasil (RM) anda? Contohnya RM15 untuk satu lead."* Guna nilai itu untuk sesi ini sahaja; cadangkan mereka masukkan ke brain (skill `marketing-brain`) supaya skill lain juga nampak.
 - Kalau ada: guna nilai itu sebagai asas semua ambang keputusan (lihat `references/threshold-keputusan.md`).
 
 ## Mod Setup (sekali sahaja)
@@ -46,7 +46,7 @@ Sebelum apa-apa mod, baca `marketing-brain.md` dari Project — khusus bahagian 
 3. **Kira dan bandingkan** setiap iklan dengan sasaran kos. Guna peraturan dalam `references/threshold-keputusan.md` untuk tandakan satu daripada lima keputusan: **Stop**, **Tambah bajet**, **Test angle sama**, **Angle baru**, atau **Tunggu** (data belum cukup) — dengan sebab satu baris setiap satu (contoh: "Kos per hasil RM32 vs sasaran RM15, 4 hari berturut-turut").
 4. **Tambah baris** ke tab `Harian` (satu baris setiap iklan) dan satu baris ringkasan ke tab `Ringkasan`, ikut format dalam `references/sheet-format.md`. Jangan timpa baris lama.
 5. **Balas dalam chat** dengan ringkasan pendek yang boleh dibaca dalam 30 saat atas telefon — format dalam `references/sheet-format.md` bahagian "Ringkasan chat": jumlah spend, jumlah hasil, kos per hasil vs sasaran, tiga tindakan utama hari ini, dan apa-apa luar biasa (spend melonjak, delivery berhenti, frekuensi tinggi).
-6. **Kalau hari ini Jumaat**, tambah satu baris di penghujung ringkasan mencadangkan satu entri Pengajaran baharu untuk brain (contohnya angle yang konsisten menang/kalah minggu ini), dan rujuk pengguna ke skill `marketing-brain` mod Kemas kini untuk masukkannya.
+6. **Kalau hari ini Jumaat**, tambah satu baris di penghujung ringkasan mencadangkan satu entri Pengajaran baharu untuk brain (contohnya angle yang konsisten menang/kalah minggu ini), dan rujuk pengguna ke skill `marketing-brain` (tambah ke brain) untuk masukkannya.
 
 ## Bila fallback CSV digunakan
 

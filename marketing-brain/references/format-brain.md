@@ -1,6 +1,6 @@
 # Format `marketing-brain.md`
 
-Fail brain mesti ikut struktur ini dengan tepat. Paparan HTML (`assets/brain-viewer.html`) membaca tajuk `##` bernombor, penanda `(belum pasti)` dan tarikh entri Pengajaran.
+Fail brain mesti ikut struktur ini dengan tepat. Panel `assets/brain.html` membaca tajuk `##` bernombor, penanda `(belum pasti)` dan tarikh entri Pengajaran.
 
 ## Peraturan format
 

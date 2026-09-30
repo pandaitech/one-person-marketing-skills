@@ -88,7 +88,7 @@ Lihat **Paparan** di bawah.
 
 ## Langkah 9: Cadang kemas kini brain
 
-Cadangkan apa nak tambah ke **6. Iklan** dalam brain: bajet bulanan (kalau baharu disahkan), objective utama, sasaran kos (termasuk yang bertanda andaian), dan senarai angle yang sedang ditest. Tanya pengguna untuk setuju, kemudian rujuk mereka ke skill `marketing-brain` mod Kemas kini untuk tulis ke fail.
+Cadangkan apa nak tambah ke **6. Iklan** dalam brain: bajet bulanan (kalau baharu disahkan), objective utama, sasaran kos (termasuk yang bertanda andaian), dan senarai angle yang sedang ditest. Tanya pengguna untuk setuju, kemudian rujuk mereka ke skill `marketing-brain` (tambah ke brain) untuk tulis ke fail.
 
 ## Langkah 10 (pilihan): Cipta terus dalam ad account
 
@@ -118,4 +118,4 @@ Jangan tulis semula paparan dari kosong dan jangan buang bahagian skrip. Butang 
 ## Bila skill lain guna hasil ini
 
 - `meta-ads-analyst` guna pelan dan angle ni sebagai rujukan bila data test sudah masuk.
-- `marketing-brain` mod Kemas kini guna cadangan daripada Langkah 9 untuk kemas kini bahagian 6.
+- `marketing-brain` (tambah ke brain) guna cadangan daripada Langkah 9 untuk kemas kini bahagian 6.

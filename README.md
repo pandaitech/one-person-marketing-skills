@@ -6,7 +6,7 @@ Tujuh skill Bahasa Melayu untuk pelajar kursus **One-Person Marketing Team** ole
 
 | Skill | Lesson | Apa yang ia buat |
 |---|---|---|
-| `marketing-brain` | Setup 2, 01.11 | Temu bual anda, bina `marketing-brain.md` (brand, produk, audience, content, iklan), dan kemas kini pengajaran setiap minggu. Ada panel setup dan paparan brain. |
+| `marketing-brain` | Setup 2, 01.11 | Terus buka panel: isi apa yang anda tahu, AI bina `marketing-brain.md` (brand, produk, audience, content, iklan) dalam satu jalan. Brain terus berkembang: tambah prestasi dan maklumat baru bila-bila masa. |
 | `content-interviewer` | 01.5 | Temu bual anda tentang pengalaman dan pendapat anda, jadikan bahan content original. |
 | `content-repurposer` | 01.6, 01.7, 01.8 | Satu rakaman atau content jadi 10 video pendek, carousel Instagram, post Threads dan newsletter. |
 | `meta-ads-strategist` | 02.2 | Belum ada data iklan? Rancang campaign pertama: objective, 3 angle, struktur test dan bajet. |

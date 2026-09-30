@@ -80,4 +80,4 @@ Jangan tulis semula paparan dari kosong dan jangan buang bahagian skrip. Butang 
 ## Lepas hasil
 
 - Tawarkan jadualkan sebagai draf melalui Post-bridge atau Postiz kalau connector itu ada dalam Project. **Jangan sekali-kali publish/aktifkan terus** — draf sahaja, sehingga pengguna sahkan dalam chat.
-- Cadangkan apa nak log balik ke brain lepas post keluar dan dapat prestasi: highlight/hook/pillar mana yang dipilih dan kenapa (bahagian 5 — Content), untuk jalankan skill `marketing-brain` mod Kemas kini lepas seminggu.
+- Cadangkan apa nak log balik ke brain lepas post keluar dan dapat prestasi: highlight/hook/pillar mana yang dipilih dan kenapa (bahagian 5 — Content), untuk jalankan skill `marketing-brain` (tambah ke brain) lepas seminggu.

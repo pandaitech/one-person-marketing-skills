@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meta Ads Analyst</title>
+<!--
+  Meta Ads Analyst viewer. Handles BOTH modes of the skill.
+  AGENT: copy this file unchanged. Replace ONLY the text inside
+  <script id="meta-ads-analyst-data" type="application/json"> ... </script>
+  with one JSON object following references/format-data.md ("mode": "belajar" or "keputusan").
+  Write any "</script" inside string values as "<\/script".
+-->
+<style>
+:root {
+  --bg: #F7F6F2; --surface: #FFFFFF; --soft: #EFEDE6; --ink: #151A1A; --body: #3D4545; --muted: #6A7373; --line: #E3E0D8;
+  --accent: #7A3E7A; --accent-soft: #F4EBF4; --warn: #8A5A00; --warn-soft: #FBF1DC; --good: #1F6B47; --good-soft: #E5F3EB; --bad: #A33A2E; --bad-soft: #FBE9E6;
+  --radius: 14px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1414; --surface: #161D1D; --soft: #1E2727; --ink: #EEECE6; --body: #C8D0CF; --muted: #93A0A0; --line: #283333;
+    --accent: #D3A6D3; --accent-soft: #2D2231; --warn: #E6C07A; --warn-soft: #30270F; --good: #86D1A8; --good-soft: #15291E; --bad: #F0A39A; --bad-soft: #321A17;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1414; --surface: #161D1D; --soft: #1E2727; --ink: #EEECE6; --body: #C8D0CF; --muted: #93A0A0; --line: #283333;
+  --accent: #D3A6D3; --accent-soft: #2D2231; --warn: #E6C07A; --warn-soft: #30270F; --good: #86D1A8; --good-soft: #15291E; --bad: #F0A39A; --bad-soft: #321A17;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--body); font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 32px 16px 80px; }
+header.top { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: flex-end; justify-content: space-between; margin-bottom: 20px; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+h1 { margin: 0; color: var(--ink); font-size: clamp(26px, 5vw, 40px); line-height: 1.1; letter-spacing: -.02em; }
+.meta { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+button { font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+button:hover { border-color: var(--accent); color: var(--accent); }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 0 0 24px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+.stat b { display: block; color: var(--ink); font-size: 26px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat span { color: var(--muted); font-size: 13px; }
+.stat.stop b { color: var(--bad); } .stat.tambah_bajet b { color: var(--good); } .stat.test_angle_sama b { color: var(--warn); }
+.stat.angle_baru b { color: var(--accent); } .stat.tunggu b { color: var(--muted); }
+.note { color: var(--muted); font-size: 14px; margin: -10px 0 20px; }
+section.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; margin: 0 0 20px; }
+section.card h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; color: var(--ink); font-size: 18px; letter-spacing: -.01em; }
+section.card h2 .actions { margin-left: auto; }
+.badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.badge.stop { color: var(--bad); background: var(--bad-soft); }
+.badge.tambah_bajet { color: var(--good); background: var(--good-soft); }
+.badge.test_angle_sama { color: var(--warn); background: var(--warn-soft); }
+.badge.angle_baru { color: var(--accent); background: var(--accent-soft); }
+.badge.tunggu { color: var(--muted); background: var(--soft); }
+/* Decision table (mode: keputusan) */
+table.decisions { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.decisions th, table.decisions td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.decisions th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+table.decisions td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.decisions td.reason { color: var(--muted); font-size: 13px; max-width: 260px; }
+table.decisions tr:last-child td { border-bottom: none; }
+.over { color: var(--bad); font-weight: 700; }
+.under { color: var(--good); font-weight: 700; }
+.cards { display: none; flex-direction: column; gap: 10px; }
+.dcard { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.dcard .row1 { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 6px; }
+.dcard .row1 b { color: var(--ink); font-size: 15px; }
+.dcard .metrics { display: flex; flex-wrap: wrap; gap: 10px 18px; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.dcard .metrics span b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.dcard .reason { font-size: 13px; color: var(--muted); }
+@media (max-width: 640px) { table.decisions { display: none; } .cards { display: flex; } }
+.actionlist { list-style: none; margin: 0; padding: 0; font-size: 14px; }
+.actionlist li { padding: 8px 10px; border-radius: 8px; margin: 4px 0; background: var(--soft); }
+/* Pattern lists (mode: belajar) */
+.pattern { border-radius: 10px; padding: 12px 14px; margin: 0 0 10px; }
+.pattern.win { background: var(--good-soft); }
+.pattern.loss { background: var(--bad-soft); }
+.pattern .ptitle { font-weight: 700; color: var(--ink); margin: 0 0 4px; }
+.pattern .pdim { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.pattern .pevidence { font-size: 14px; margin: 4px 0; }
+.pattern .psamples { font-size: 12px; color: var(--muted); }
+.hyp { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--warn); border: 1px solid currentColor; border-radius: 999px; padding: 0 7px; margin-left: 6px; vertical-align: 1px; }
+.brainlist h3 { margin: 14px 0 6px; color: var(--ink); font-size: 14px; }
+.brainlist h3:first-child { margin-top: 0; }
+.brainlist ul { margin: 0; padding-left: 18px; }
+.brainlist li { margin: 4px 0; font-size: 14px; }
+.empty-note { color: var(--muted); font-style: italic; }
+.toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(20px); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; opacity: 0; transition: .25s; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateX(-50%); }
+.error { background: var(--bad-soft); color: var(--bad); padding: 16px; border-radius: var(--radius); }
+@media print { .actions { display: none; } body { background: #fff; } section.card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<script id="meta-ads-analyst-data" type="application/json">
+{
+  "mode": "keputusan",
+  "business": "Nama Bisnes",
+  "currency": "RM",
+  "target_cost_per_result": 15,
+  "period": { "from": "2026-01-01", "to": "2026-01-07", "days": 7 },
+  "summary": { "stop": 0, "tambah_bajet": 0, "test_angle_sama": 0, "angle_baru": 0, "tunggu": 0 },
+  "items": [],
+  "action_list": []
+}
+</script>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow" id="eyebrow">Meta Ads Analyst</p>
+      <h1 id="title">Meta Ads Analyst</h1>
+      <p class="meta" id="updated"></p>
+    </div>
+    <div class="actions">
+      <button type="button" id="copyMain">Salin</button>
+    </div>
+  </header>
+  <section class="summary" id="summary" aria-label="Ringkasan"></section>
+  <p class="note" id="note"></p>
+  <main id="main"></main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const RAW_TEXT = document.getElementById("meta-ads-analyst-data").textContent.replace(/<\\\/script/gi, "</script").trim();
+
+  function fmtDate(d) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return d || "";
+    const bulan = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogos", "Sep", "Okt", "Nov", "Dis"];
+    const [y, m, day] = d.split("-").map(Number);
+    return `${day} ${bulan[m - 1]} ${y}`;
+  }
+  function money(cur, n) {
+    if (n == null || isNaN(n)) return "-";
+    return `${esc(cur || "RM")}${Number(n).toLocaleString("en-MY", { maximumFractionDigits: 2 })}`;
+  }
+  const DECISION_LABEL = {
+    stop: "Stop", tambah_bajet: "Tambah bajet", test_angle_sama: "Test angle sama",
+    angle_baru: "Angle baru", tunggu: "Tunggu"
+  };
+  const DECISION_ORDER = ["stop", "tambah_bajet", "test_angle_sama", "angle_baru", "tunggu"];
+
+  function badge(dec) {
+    const cls = DECISION_LABEL[dec] ? dec : "tunggu";
+    return `<span class="badge ${cls}">${esc(DECISION_LABEL[cls] || dec || "-")}</span>`;
+  }
+
+  function renderKeputusan(data) {
+    document.getElementById("eyebrow").textContent = "Meta Ads Analyst — Keputusan harian/mingguan";
+    const period = data.period || {};
+    document.getElementById("updated").textContent = period.from
+      ? `Data ${fmtDate(period.from)} – ${fmtDate(period.to)}${period.days ? ` (${period.days} hari)` : ""}`
+      : "";
+    document.getElementById("note").textContent = "Baca sahaja. Semak setiap tindakan sebelum buat apa-apa dalam ad account.";
+
+    const items = Array.isArray(data.items) ? data.items : [];
+    const summary = data.summary || {};
+    const counts = {};
+    DECISION_ORDER.forEach(k => { counts[k] = summary[k] != null ? summary[k] : items.filter(it => it.decision === k).length; });
+
+    document.getElementById("summary").innerHTML = DECISION_ORDER.map(k =>
+      `<div class="stat ${k}"><b>${esc(counts[k])}</b><span>${esc(DECISION_LABEL[k])}</span></div>`
+    ).join("") + (data.target_cost_per_result != null
+      ? `<div class="stat"><b>${money(data.currency, data.target_cost_per_result)}</b><span>Sasaran kos/result</span></div>` : "");
+
+    if (!items.length) {
+      document.getElementById("main").innerHTML = `<section class="card"><p class="empty-note">Tiada iklan aktif untuk dinilai buat masa ini.</p></section>`;
+      return;
+    }
+
+    const rows = items.map(it => {
+      const cpr = it.cost_per_result;
+      const target = data.target_cost_per_result;
+      const cprCls = (cpr != null && target != null) ? (cpr <= target ? "under" : (cpr >= target * 1.5 ? "over" : "")) : "";
+      return `<tr>
+        <td><b>${esc(it.name)}</b>${it.angle ? `<div class="meta" style="margin-top:2px">${esc(it.angle)}</div>` : ""}</td>
+        <td class="num">${money(data.currency, it.spend)}</td>
+        <td class="num">${it.results != null ? esc(it.results) : "-"}</td>
+        <td class="num ${cprCls}">${money(data.currency, cpr)}</td>
+        <td>${badge(it.decision)}</td>
+        <td class="reason">${esc(it.signal || "")}${it.signal && it.reason ? "<br>" : ""}${esc(it.reason || "")}</td>
+      </tr>`;
+    }).join("");
+
+    const cards = items.map(it => `
+      <div class="dcard">
+        <div class="row1"><b>${esc(it.name)}</b>${badge(it.decision)}</div>
+        <div class="metrics">
+          <span>Spend <b>${money(data.currency, it.spend)}</b></span>
+          <span>Result <b>${it.results != null ? esc(it.results) : "-"}</b></span>
+          <span>CPR <b>${money(data.currency, it.cost_per_result)}</b></span>
+        </div>
+        <div class="reason">${esc(it.signal || "")}${it.signal && it.reason ? " — " : ""}${esc(it.reason || "")}</div>
+      </div>`).join("");
+
+    const actionList = Array.isArray(data.action_list) && data.action_list.length
+      ? data.action_list
+      : items.map(it => `${it.name} — ${DECISION_LABEL[it.decision] || it.decision}: ${it.reason || ""}`);
+
+    document.getElementById("main").innerHTML = `
+      <section class="card">
+        <h2>Jadual keputusan</h2>
+        <table class="decisions">
+          <thead><tr><th>Iklan</th><th>Spend</th><th>Result</th><th>Cost/result</th><th>Keputusan</th><th>Signal &amp; sebab</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <div class="cards">${cards}</div>
+      </section>
+      <section class="card">
+        <h2>Senarai tindakan<span class="actions"><button type="button" id="copyActions">Salin senarai tindakan</button></span></h2>
+        <ul class="actionlist">${actionList.map(a => `<li>${esc(a)}</li>`).join("")}</ul>
+      </section>`;
+
+    wireCopy("copyActions", actionList.join("\n"));
+    wireCopy("copyMain", actionList.join("\n"));
+  }
+
+  function renderBelajar(data) {
+    document.getElementById("eyebrow").textContent = "Meta Ads Analyst — Belajar dari data";
+    const period = data.period || {};
+    document.getElementById("updated").textContent = period.from
+      ? `Data ${fmtDate(period.from)} – ${fmtDate(period.to)}${period.days ? ` (${period.days} hari)` : ""}`
+      : "";
+    document.getElementById("note").textContent = data.min_data_rule
+      ? `Peraturan minimum data: ${data.min_data_rule}`
+      : "Baca sahaja. Tiada apa yang diubah dalam ad account.";
+
+    const s = data.summary || {};
+    document.getElementById("summary").innerHTML = `
+      <div class="stat"><b>${esc(s.ads_reviewed != null ? s.ads_reviewed : "-")}</b><span>Iklan disemak</span></div>
+      <div class="stat tambah_bajet"><b>${esc(s.winning_patterns != null ? s.winning_patterns : (data.winning_patterns || []).length)}</b><span>Corak menang</span></div>
+      <div class="stat stop"><b>${esc(s.losing_patterns != null ? s.losing_patterns : (data.losing_patterns || []).length)}</b><span>Corak kalah</span></div>
+      <div class="stat test_angle_sama"><b>${esc(s.hypotheses != null ? s.hypotheses : "-")}</b><span>Hipotesis (data belum cukup)</span></div>`;
+
+    function patternList(list, cls) {
+      if (!list || !list.length) return `<p class="empty-note">Tiada corak dikesan.</p>`;
+      return list.map(p => `
+        <div class="pattern ${cls}">
+          <div class="pdim">${esc(p.dimension || "")}</div>
+          <div class="ptitle">${esc(p.title)}${p.is_hypothesis ? '<span class="hyp">hipotesis</span>' : ""}</div>
+          <div class="pevidence">${esc(p.evidence || "")}</div>
+          ${p.sample_ads && p.sample_ads.length ? `<div class="psamples">Iklan: ${esc(p.sample_ads.join(", "))}</div>` : ""}
+        </div>`).join("");
+    }
+
+    const bs = data.brain_suggestions || {};
+    function brainGroup(label, arr) {
+      if (!arr || !arr.length) return "";
+      return `<h3>${esc(label)}</h3><ul>${arr.map(a => `<li>${esc(a)}</li>`).join("")}</ul>`;
+    }
+    const brainText = ["Tambah", "Ubah", "Buang"].map((label, i) => {
+      const key = ["add", "change", "remove"][i];
+      return (bs[key] && bs[key].length) ? `${label}:\n` + bs[key].map(a => `- ${a}`).join("\n") : "";
+    }).filter(Boolean).join("\n\n");
+
+    document.getElementById("main").innerHTML = `
+      <section class="card">
+        <h2>Corak yang menang</h2>
+        ${patternList(data.winning_patterns, "win")}
+      </section>
+      <section class="card">
+        <h2>Corak yang kalah</h2>
+        ${patternList(data.losing_patterns, "loss")}
+      </section>
+      <section class="card">
+        <h2>Cadangan untuk brain<span class="actions"><button type="button" id="copyBrain">Salin cadangan brain</button></span></h2>
+        <div class="brainlist">
+          ${brainGroup("Tambah", bs.add) || brainGroup("Ubah", bs.change) || brainGroup("Buang", bs.remove) ? "" : '<p class="empty-note">Tiada cadangan buat masa ini.</p>'}
+          ${brainGroup("Tambah", bs.add)}${brainGroup("Ubah", bs.change)}${brainGroup("Buang", bs.remove)}
+        </div>
+      </section>`;
+
+    wireCopy("copyBrain", brainText);
+    wireCopy("copyMain", brainText || (data.winning_patterns || []).map(p => p.title).join("\n"));
+  }
+
+  function toast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove("show"), 1800);
+  }
+  function wireCopy(id, text) {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(text || ""); toast("Disalin"); }
+      catch (e) {
+        const ta = document.createElement("textarea"); ta.value = text || ""; document.body.appendChild(ta); ta.select();
+        try { document.execCommand("copy"); toast("Disalin"); } catch (e2) { toast("Tak dapat salin. Pilih teks secara manual."); }
+        ta.remove();
+      }
+    });
+  }
+
+  function render() {
+    let data;
+    try { data = JSON.parse(RAW_TEXT); }
+    catch (e) {
+      document.getElementById("main").innerHTML = `<div class="error card">Data tidak sah (JSON rosak): ${esc(String(e.message || e))}</div>`;
+      document.getElementById("summary").innerHTML = ""; document.getElementById("note").textContent = "";
+      return;
+    }
+    document.getElementById("title").textContent = data.business ? `Meta Ads: ${data.business}` : "Meta Ads Analyst";
+    document.title = data.business ? `Meta Ads Analyst: ${data.business}` : "Meta Ads Analyst";
+    if (data.mode === "belajar") renderBelajar(data);
+    else if (data.mode === "keputusan") renderKeputusan(data);
+    else document.getElementById("main").innerHTML = `<div class="error card">Medan "mode" mesti "belajar" atau "keputusan".</div>`;
+  }
+
+  try { render(); } catch (e) { document.getElementById("main").innerHTML = `<div class="error card">Paparan gagal: ${esc(String(e.message || e))}</div>`; }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preview Carousel</title>
+<!--
+  Carousel preview viewer (content-repurposer, mod Carousel).
+  AGENT: copy this file unchanged. Replace ONLY the JSON inside
+  <script id="carousel-data" type="application/json"> ... </script>.
+  Schema: skills/content-repurposer/references/format-carousel.md
+-->
+<style>
+:root {
+  --bg: #F7F6F2; --surface: #FFFFFF; --soft: #EFEDE6; --ink: #151A1A; --body: #3D4545; --muted: #6A7373; --line: #E3E0D8;
+  --accent: #7A3E7A; --accent-soft: #F4EBF4; --warn: #8A5A00; --warn-soft: #FBF1DC; --good: #1F6B47; --good-soft: #E5F3EB; --bad: #A33A2E; --bad-soft: #FBE9E6;
+  --radius: 14px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1414; --surface: #161D1D; --soft: #1E2727; --ink: #EEECE6; --body: #C8D0CF; --muted: #93A0A0; --line: #283333;
+    --accent: #D3A6D3; --accent-soft: #2D2231; --warn: #E6C07A; --warn-soft: #30270F; --good: #86D1A8; --good-soft: #15291E; --bad: #F0A39A; --bad-soft: #321A17;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1414; --surface: #161D1D; --soft: #1E2727; --ink: #EEECE6; --body: #C8D0CF; --muted: #93A0A0; --line: #283333;
+  --accent: #D3A6D3; --accent-soft: #2D2231; --warn: #E6C07A; --warn-soft: #30270F; --good: #86D1A8; --good-soft: #15291E; --bad: #F0A39A; --bad-soft: #321A17;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--body); font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 32px 16px 80px; }
+header.top { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: flex-end; justify-content: space-between; margin-bottom: 20px; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ac, var(--accent)); margin: 0 0 6px; }
+h1 { margin: 0; color: var(--ink); font-size: clamp(24px, 5vw, 36px); line-height: 1.15; letter-spacing: -.02em; }
+.meta { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+button { font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+button:hover { border-color: var(--ac, var(--accent)); color: var(--ac, var(--accent)); }
+button:focus-visible { outline: 2px solid var(--ac, var(--accent)); outline-offset: 2px; }
+.rail { display: flex; gap: 16px; overflow-x: auto; padding: 4px 4px 16px; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
+.slide { flex: none; width: min(78vw, 300px); aspect-ratio: 4 / 5; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); scroll-snap-align: start; display: flex; flex-direction: column; padding: 20px; position: relative; }
+.slide .num { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: var(--ac-soft, var(--accent-soft)); color: var(--ac, var(--accent)); font-size: 13px; font-weight: 800; flex: none; }
+.slide .kind { position: absolute; top: 20px; right: 18px; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.slide .text { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--ink); font-size: 20px; font-weight: 700; line-height: 1.35; margin-top: 10px; overflow-wrap: anywhere; }
+.slide.hook { border-color: var(--ac, var(--accent)); }
+.slide.cta .text { color: var(--ac, var(--accent)); }
+.hint { color: var(--muted); font-size: 13px; margin: 0 0 16px; }
+.caption-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; margin-top: 8px; }
+.caption-card h2 { margin: 0 0 8px; color: var(--ink); font-size: 16px; }
+.caption-card p { margin: 0; white-space: pre-wrap; }
+.empty-note { color: var(--muted); font-style: italic; }
+.toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(20px); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; opacity: 0; transition: .25s; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateX(-50%); }
+.error { background: var(--bad-soft); color: var(--bad); padding: 16px; border-radius: var(--radius); }
+@media print { .actions { display: none; } body { background: #fff; } }
+</style>
+</head>
+<body>
+<script id="carousel-data" type="application/json">
+{
+  "business": "Nama Bisnes",
+  "accent": "",
+  "slides": [],
+  "caption": ""
+}
+</script>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Preview Carousel</p>
+      <h1 id="title">Preview Carousel</h1>
+      <p class="meta" id="count"></p>
+    </div>
+    <div class="actions">
+      <button type="button" id="copyAll">Salin semua teks</button>
+    </div>
+  </header>
+  <p class="hint">Scroll atau swipe untuk lihat setiap slide. Ini semakan teks dan susunan sahaja — reka slide sebenar dalam tool design anda.</p>
+  <div class="rail" id="rail"></div>
+  <div class="caption-card" id="captionCard" style="display:none">
+    <h2>Caption post</h2>
+    <p id="captionText"></p>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  let DATA;
+  try {
+    DATA = JSON.parse(document.getElementById("carousel-data").textContent);
+  } catch (e) {
+    document.getElementById("rail").innerHTML = `<div class="error">Data carousel rosak (JSON tidak sah): ${String(e.message || e)}</div>`;
+    return;
+  }
+
+  const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const slides = Array.isArray(DATA.slides) ? DATA.slides.slice() : [];
+  slides.sort((a, b) => (a.number ?? 0) - (b.number ?? 0));
+
+  document.getElementById("title").textContent = DATA.business ? `Carousel: ${DATA.business}` : "Preview Carousel";
+  document.title = document.getElementById("title").textContent;
+  document.getElementById("count").textContent = slides.length ? `${slides.length} slide` : "";
+
+  if (/^#[0-9a-fA-F]{3,8}$/.test(String(DATA.accent || "").trim())) {
+    document.documentElement.style.setProperty("--ac", DATA.accent.trim());
+  }
+
+  if (!slides.length) {
+    document.getElementById("rail").innerHTML = `<p class="empty-note">Tiada slide lagi. Jalankan skill content-repurposer, mod carousel, dengan satu content asal.</p>`;
+  } else {
+    document.getElementById("rail").innerHTML = slides.map(s => `
+      <div class="slide ${esc(s.type || "")}">
+        <div class="num">${esc(s.number ?? "")}</div>
+        <div class="kind">${esc(s.type || "")}</div>
+        <div class="text">${esc(s.text || "")}</div>
+      </div>`).join("");
+  }
+
+  if (DATA.caption) {
+    document.getElementById("captionCard").style.display = "";
+    document.getElementById("captionText").textContent = DATA.caption;
+  }
+
+  function toast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove("show"), 1800);
+  }
+
+  document.getElementById("copyAll").addEventListener("click", async () => {
+    const lines = slides.map(s => `Slide ${s.number ?? ""} (${s.type || ""}): ${s.text || ""}`);
+    if (DATA.caption) { lines.push(""); lines.push("Caption:"); lines.push(DATA.caption); }
+    const text = lines.join("\n");
+    try { await navigator.clipboard.writeText(text); toast("Teks carousel disalin"); }
+    catch (e) {
+      const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); toast("Teks carousel disalin"); } catch (e2) { toast("Tak dapat salin. Pilih teks secara manual."); }
+      ta.remove();
+    }
+  });
+})();
+</script>
+</body>
+</html>

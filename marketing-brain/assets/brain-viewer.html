@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketing Brain</title>
+<!--
+  Marketing Brain viewer.
+  AGENT: copy this file unchanged. Replace ONLY the text inside
+  <script id="brain-data" type="text/markdown"> ... </script> with the full marketing-brain.md.
+  Write any "</script" in the brain text as "<\/script".
+-->
+<style>
+:root {
+  --bg: #F7F6F2; --surface: #FFFFFF; --soft: #EFEDE6; --ink: #151A1A; --body: #3D4545; --muted: #6A7373; --line: #E3E0D8;
+  --accent: #7A3E7A; --accent-soft: #F4EBF4; --warn: #8A5A00; --warn-soft: #FBF1DC; --good: #1F6B47; --good-soft: #E5F3EB; --bad: #A33A2E; --bad-soft: #FBE9E6;
+  --radius: 14px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1414; --surface: #161D1D; --soft: #1E2727; --ink: #EEECE6; --body: #C8D0CF; --muted: #93A0A0; --line: #283333;
+    --accent: #D3A6D3; --accent-soft: #2D2231; --warn: #E6C07A; --warn-soft: #30270F; --good: #86D1A8; --good-soft: #15291E; --bad: #F0A39A; --bad-soft: #321A17;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1414; --surface: #161D1D; --soft: #1E2727; --ink: #EEECE6; --body: #C8D0CF; --muted: #93A0A0; --line: #283333;
+  --accent: #D3A6D3; --accent-soft: #2D2231; --warn: #E6C07A; --warn-soft: #30270F; --good: #86D1A8; --good-soft: #15291E; --bad: #F0A39A; --bad-soft: #321A17;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--body); font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 32px 16px 80px; }
+header.top { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: flex-end; justify-content: space-between; margin-bottom: 20px; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+h1 { margin: 0; color: var(--ink); font-size: clamp(28px, 5vw, 44px); line-height: 1.1; letter-spacing: -.02em; }
+.meta { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+button { font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+button:hover { border-color: var(--accent); color: var(--accent); }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 0 0 20px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+.stat b { display: block; color: var(--ink); font-size: 26px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat span { color: var(--muted); font-size: 13px; }
+.meter { height: 6px; background: var(--soft); border-radius: 99px; margin-top: 10px; overflow: hidden; }
+.meter i { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+nav.chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 24px; }
+nav.chips a { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: var(--body); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 600; }
+nav.chips a:hover { color: var(--accent); border-color: var(--accent); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); flex: none; }
+.dot.partial { background: var(--warn); }
+.dot.empty { background: var(--line); border: 1px solid var(--muted); }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; min-width: 0; scroll-margin-top: 16px; }
+.card.wide { grid-column: 1 / -1; }
+.card h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; color: var(--ink); font-size: 19px; letter-spacing: -.01em; }
+.card h2 .num { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: var(--accent-soft); color: var(--accent); font-size: 14px; flex: none; }
+.card h2 .state { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--muted); }
+.card h3 { margin: 16px 0 6px; color: var(--ink); font-size: 15px; }
+.card h3:first-of-type { margin-top: 4px; }
+.card ul { margin: 0; padding-left: 18px; }
+.card li { margin: 4px 0; }
+.card li::marker { color: var(--muted); }
+.card p { margin: 6px 0; }
+.card b, .card strong { color: var(--ink); }
+.card code { font-size: .9em; background: var(--soft); padding: 1px 5px; border-radius: 5px; }
+.card table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 8px 0; display: block; overflow-x: auto; }
+.card th, .card td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.card th { color: var(--muted); font-weight: 600; }
+.unsure { background: var(--warn-soft); border-radius: 6px; padding: 1px 6px; margin-left: -6px; }
+.tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--warn); border: 1px solid currentColor; border-radius: 999px; padding: 0 7px; margin-left: 6px; vertical-align: 1px; }
+.timeline { list-style: none; padding: 0 !important; margin: 0; position: relative; }
+.entry { position: relative; padding: 0 0 18px 26px; border-left: 2px solid var(--line); margin-left: 6px; }
+.entry:last-child { border-left-color: transparent; padding-bottom: 0; }
+.entry::before { content: ""; position: absolute; left: -8px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--surface); border: 3px solid var(--accent); }
+.entry .date { font-size: 12px; font-weight: 700; letter-spacing: .06em; color: var(--accent); text-transform: uppercase; }
+.entry .head { color: var(--ink); font-weight: 700; margin: 2px 0 6px; }
+.entry ul { list-style: none; padding: 0; }
+.entry li { padding: 6px 10px; border-radius: 8px; margin: 4px 0; }
+.entry li.win { background: var(--good-soft); }
+.entry li.loss { background: var(--bad-soft); }
+.entry li.next { background: var(--accent-soft); }
+.entry li .mark { font-weight: 800; margin-right: 6px; }
+.entry li.win .mark { color: var(--good); }
+.entry li.loss .mark { color: var(--bad); }
+.entry li.next .mark { color: var(--accent); }
+.empty-note { color: var(--muted); font-style: italic; }
+.open li { background: var(--warn-soft); border-radius: 8px; padding: 6px 10px; list-style: none; margin: 6px 0 6px -18px; }
+.hint { color: var(--muted); font-size: 14px; margin: -4px 0 10px; }
+.toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(20px); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; opacity: 0; transition: .25s; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateX(-50%); }
+.error { background: var(--bad-soft); color: var(--bad); padding: 16px; border-radius: var(--radius); }
+@media print { .actions, nav.chips { display: none; } body { background: #fff; } .card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<script id="brain-data" type="text/markdown">
+# Marketing Brain: Nama Bisnes
+Dikemas kini: 2026-01-01
+
+## 1. Bisnes
+- (belum pasti)
+
+## 2. Brand & gaya bahasa
+- (belum pasti)
+
+## 3. Produk & tawaran
+- (belum pasti)
+
+## 4. Audience
+- (belum pasti)
+
+## 5. Content
+- (belum pasti)
+
+## 6. Iklan
+- (belum pasti)
+
+## 7. Pengajaran
+- (belum ada pengajaran)
+
+## 8. Belum pasti
+- Jalankan skill marketing-brain untuk isi brain ini.
+</script>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Marketing Brain</p>
+      <h1 id="title">Marketing Brain</h1>
+      <p class="meta" id="updated"></p>
+    </div>
+    <div class="actions">
+      <button type="button" id="copy">Salin brain</button>
+      <button type="button" id="download">Muat turun .md</button>
+    </div>
+  </header>
+  <section class="summary" id="summary" aria-label="Ringkasan"></section>
+  <nav class="chips" id="chips" aria-label="Bahagian brain"></nav>
+  <main class="grid" id="grid"></main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  const RAW = document.getElementById("brain-data").textContent.replace(/<\\\/script/gi, "</script").trim() + "\n";
+  const UNSURE = /\(belum pasti\)/i;
+  const WIDE = new Set(["3", "7", "8"]);
+
+  const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  function inline(s) {
+    let h = esc(s);
+    h = h.replace(/`([^`]+)`/g, "<code>$1</code>");
+    h = h.replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>");
+    h = h.replace(/(^|[^*\w])\*([^*\n]+)\*(?!\*)/g, "$1<i>$2</i>");
+    h = h.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    h = h.replace(/\s*\(belum pasti\)/gi, '<span class="tag">belum pasti</span>');
+    return h;
+  }
+
+  // Block-level markdown: ### headings, nested bullets, tables, paragraphs.
+  function blocks(lines) {
+    let out = "", i = 0;
+    while (i < lines.length) {
+      const line = lines[i];
+      if (!line.trim()) { i++; continue; }
+      if (/^###\s+/.test(line)) { out += `<h3>${inline(line.replace(/^###\s+/, ""))}</h3>`; i++; continue; }
+      if (/^\s*\|/.test(line)) {
+        const rows = [];
+        while (i < lines.length && /^\s*\|/.test(lines[i])) rows.push(lines[i++]);
+        const cells = r => r.trim().replace(/^\||\|$/g, "").split("|").map(c => c.trim());
+        const body = rows.filter(r => !/^\s*\|[\s:|-]+\|\s*$/.test(r));
+        const [head, ...rest] = body;
+        out += "<table><thead><tr>" + cells(head).map(c => `<th>${inline(c)}</th>`).join("") + "</tr></thead><tbody>" +
+          rest.map(r => "<tr>" + cells(r).map(c => `<td>${inline(c)}</td>`).join("") + "</tr>").join("") + "</tbody></table>";
+        continue;
+      }
+      if (/^\s*[-*]\s+/.test(line)) {
+        const items = [];
+        while (i < lines.length && (/^\s*[-*]\s+/.test(lines[i]) || (/^\s{2,}\S/.test(lines[i]) && items.length))) {
+          const m = lines[i].match(/^(\s*)[-*]\s+(.*)$/);
+          if (m) items.push({ depth: Math.floor(m[1].length / 2), text: m[2] });
+          else items[items.length - 1].text += " " + lines[i].trim();
+          i++;
+        }
+        out += list(items);
+        continue;
+      }
+      const para = [];
+      while (i < lines.length && lines[i].trim() && !/^(###\s|\s*[-*]\s|\s*\|)/.test(lines[i])) para.push(lines[i++].trim());
+      out += `<p>${inline(para.join(" "))}</p>`;
+    }
+    return out;
+  }
+  function list(items) {
+    let html = "", depth = -1;
+    for (const it of items) {
+      while (depth < it.depth) { html += "<ul>"; depth++; }
+      while (depth > it.depth) { html += "</li></ul>"; depth--; }
+      if (html.endsWith("</li>") === false && html.endsWith("<ul>") === false) html += "</li>";
+      const cls = UNSURE.test(it.text) ? ' class="unsure"' : "";
+      html += `<li><span${cls}>${inline(it.text)}</span>`;
+    }
+    while (depth >= 0) { html += "</li></ul>"; depth--; }
+    return html;
+  }
+
+  function lessons(lines) {
+    const entries = [];
+    let cur = null;
+    for (const line of lines) {
+      const h = line.match(/^###\s+(.*)$/);
+      if (h) {
+        const m = h[1].match(/^(\d{4}-\d{2}-\d{2})\s*[:\-–—]?\s*(.*)$/);
+        cur = { date: m ? m[1] : "", head: m ? m[2] : h[1], items: [] };
+        entries.push(cur);
+        continue;
+      }
+      const b = line.match(/^\s*[-*]\s+(.*)$/);
+      if (b && cur) cur.items.push(b[1]);
+    }
+    if (!entries.length) return `<p class="empty-note">Belum ada pengajaran. Masukkan prestasi content atau iklan minggu ini dan minta skill kemas kini brain.</p>`;
+    const kind = t => /^✅/.test(t) ? ["win", "✅"] : /^❌/.test(t) ? ["loss", "❌"] : /^(→|->)/.test(t) ? ["next", "→"] : ["", ""];
+    return `<ol class="timeline">` + entries.map(e => `<li class="entry">
+      <div class="date">${esc(fmtDate(e.date))}</div>
+      <div class="head">${inline(e.head)}</div>
+      <ul>${e.items.map(t => { const [c, mk] = kind(t); const text = c ? t.replace(/^(✅|❌|→|->)\s*/, "") : t;
+        return `<li class="${c}">${mk ? `<span class="mark">${mk}</span>` : ""}${inline(text)}</li>`; }).join("")}</ul>
+    </li>`).join("") + `</ol>`;
+  }
+
+  function fmtDate(d) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+    const bulan = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogos", "Sep", "Okt", "Nov", "Dis"];
+    const [y, m, day] = d.split("-").map(Number);
+    return `${day} ${bulan[m - 1]} ${y}`;
+  }
+
+  function status(lines) {
+    const items = lines.filter(l => /^\s*[-*]\s+/.test(l) || /^\s*\|/.test(l));
+    if (!items.length || items.every(l => UNSURE.test(l))) return "empty";
+    return items.some(l => UNSURE.test(l)) ? "partial" : "full";
+  }
+
+  function render() {
+    const lines = RAW.split(/\r?\n/);
+    const titleLine = lines.find(l => /^#\s+/.test(l)) || "# Marketing Brain";
+    const name = titleLine.replace(/^#\s+/, "").replace(/^Marketing Brain\s*[:\-–—]\s*/i, "").trim() || "Marketing Brain";
+    const upd = (lines.find(l => /^Dikemas kini\s*:/i.test(l)) || "").replace(/^Dikemas kini\s*:\s*/i, "").trim();
+    document.getElementById("title").textContent = name;
+    document.title = `Marketing Brain: ${name}`;
+    document.getElementById("updated").textContent = upd ? `Dikemas kini ${fmtDate(upd)}` : "";
+
+    const sections = [];
+    let cur = null;
+    for (const line of lines) {
+      const m = line.match(/^##\s+(?:(\d+)\.\s*)?(.+)$/);
+      if (m) { cur = { num: m[1] || String(sections.length + 1), name: m[2].trim(), lines: [] }; sections.push(cur); continue; }
+      if (cur) cur.lines.push(line);
+    }
+    if (!sections.length) { document.getElementById("grid").innerHTML = `<div class="error card wide">Brain kosong atau format tidak dikenali. Pastikan setiap bahagian bermula dengan "## 1. Bisnes" dan seterusnya.</div>`; return; }
+
+    const core = sections.filter(s => !/pengajaran|belum pasti/i.test(s.name));
+    const states = core.map(s => status(s.lines));
+    const full = states.filter(s => s === "full").length;
+    const openSec = sections.find(s => /belum pasti/i.test(s.name));
+    const openCount = openSec ? openSec.lines.filter(l => /^\s*[-*]\s+\S/.test(l)).length : lines.filter(l => UNSURE.test(l)).length;
+    const lessonSec = sections.find(s => /pengajaran/i.test(s.name));
+    const lessonCount = lessonSec ? lessonSec.lines.filter(l => /^###\s+/.test(l)).length : 0;
+    const pct = core.length ? Math.round(states.reduce((a, s) => a + (s === "full" ? 1 : s === "partial" ? .5 : 0), 0) / core.length * 100) : 0;
+
+    document.getElementById("summary").innerHTML = `
+      <div class="stat"><b>${pct}%</b><span>Brain lengkap (${full}/${core.length} bahagian penuh)</span><div class="meter"><i style="width:${pct}%"></i></div></div>
+      <div class="stat"><b>${openCount}</b><span>Perkara belum pasti</span></div>
+      <div class="stat"><b>${lessonCount}</b><span>Entri pengajaran</span></div>`;
+
+    const stateLabel = { full: "Lengkap", partial: "Separa", empty: "Kosong" };
+    document.getElementById("chips").innerHTML = sections.map(s => {
+      const st = /pengajaran|belum pasti/i.test(s.name) ? "" : status(s.lines);
+      return `<a href="#s${esc(s.num)}">${st ? `<span class="dot ${st === "full" ? "" : st}" aria-hidden="true"></span>` : ""}${esc(s.name)}</a>`;
+    }).join("");
+
+    document.getElementById("grid").innerHTML = sections.map(s => {
+      const isLesson = /pengajaran/i.test(s.name), isOpen = /belum pasti/i.test(s.name);
+      const st = isLesson || isOpen ? "" : status(s.lines);
+      let body;
+      if (isLesson) body = lessons(s.lines);
+      else if (isOpen) body = `<p class="hint">Jawab bila ada masa. Brain tak perlu sempurna hari pertama.</p><div class="open">${blocks(s.lines) || '<p class="empty-note">Tiada. Brain anda lengkap.</p>'}</div>`;
+      else body = blocks(s.lines);
+      return `<section class="card${WIDE.has(s.num) || isLesson || isOpen ? " wide" : ""}" id="s${esc(s.num)}">
+        <h2><span class="num">${esc(s.num)}</span>${esc(s.name)}${st ? `<span class="state">${stateLabel[st]}</span>` : ""}</h2>${body}</section>`;
+    }).join("");
+  }
+
+  function toast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove("show"), 1800);
+  }
+  document.getElementById("copy").addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(RAW); toast("Brain disalin"); }
+    catch (e) {
+      const ta = document.createElement("textarea"); ta.value = RAW; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); toast("Brain disalin"); } catch (e2) { toast("Tak dapat salin. Pilih teks secara manual."); }
+      ta.remove();
+    }
+  });
+  document.getElementById("download").addEventListener("click", () => {
+    try {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([RAW], { type: "text/markdown;charset=utf-8" }));
+      a.download = "marketing-brain.md"; document.body.appendChild(a); a.click(); a.remove();
+      toast("Memuat turun marketing-brain.md");
+    } catch (e) { toast("Muat turun disekat. Guna butang Salin brain."); }
+  });
+
+  try { render(); } catch (e) { document.getElementById("grid").innerHTML = `<div class="error card wide">Paparan gagal: ${esc(String(e.message || e))}</div>`; }
+})();
+</script>
+</body>
+</html>

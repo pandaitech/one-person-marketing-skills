@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pelan Meta Ads</title>
+<!--
+  Meta Ads Strategist plan viewer.
+  AGENT: copy this file unchanged. Replace ONLY the text inside
+  <script id="meta-ads-strategist-data" type="application/json"> ... </script> with the plan JSON
+  (see references/format-pelan.md for the schema).
+-->
+<style>
+:root {
+  --bg: #F7F6F2; --surface: #FFFFFF; --soft: #EFEDE6; --ink: #151A1A; --body: #3D4545; --muted: #6A7373; --line: #E3E0D8;
+  --accent: #7A3E7A; --accent-soft: #F4EBF4; --warn: #8A5A00; --warn-soft: #FBF1DC; --good: #1F6B47; --good-soft: #E5F3EB; --bad: #A33A2E; --bad-soft: #FBE9E6;
+  --radius: 14px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1414; --surface: #161D1D; --soft: #1E2727; --ink: #EEECE6; --body: #C8D0CF; --muted: #93A0A0; --line: #283333;
+    --accent: #D3A6D3; --accent-soft: #2D2231; --warn: #E6C07A; --warn-soft: #30270F; --good: #86D1A8; --good-soft: #15291E; --bad: #F0A39A; --bad-soft: #321A17;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1414; --surface: #161D1D; --soft: #1E2727; --ink: #EEECE6; --body: #C8D0CF; --muted: #93A0A0; --line: #283333;
+  --accent: #D3A6D3; --accent-soft: #2D2231; --warn: #E6C07A; --warn-soft: #30270F; --good: #86D1A8; --good-soft: #15291E; --bad: #F0A39A; --bad-soft: #321A17;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--body); font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 32px 16px 80px; }
+header.top { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: flex-end; justify-content: space-between; margin-bottom: 20px; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+h1 { margin: 0; color: var(--ink); font-size: clamp(26px, 5vw, 40px); line-height: 1.15; letter-spacing: -.02em; }
+.meta { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+button { font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+button:hover { border-color: var(--accent); color: var(--accent); }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 0 0 20px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+.stat b { display: block; color: var(--ink); font-size: 22px; line-height: 1.2; }
+.stat span { color: var(--muted); font-size: 13px; }
+nav.chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 24px; }
+nav.chips a { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: var(--body); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 600; }
+nav.chips a:hover { color: var(--accent); border-color: var(--accent); }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; min-width: 0; scroll-margin-top: 16px; }
+.card.wide { grid-column: 1 / -1; }
+.card h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; color: var(--ink); font-size: 19px; letter-spacing: -.01em; }
+.card h2 .num { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: var(--accent-soft); color: var(--accent); font-size: 14px; flex: none; }
+.card h3 { margin: 16px 0 6px; color: var(--ink); font-size: 15px; }
+.card h3:first-of-type { margin-top: 4px; }
+.card ul { margin: 0; padding-left: 18px; }
+.card li { margin: 4px 0; }
+.card p { margin: 6px 0; }
+.card b, .card strong { color: var(--ink); }
+.tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--warn); border: 1px solid currentColor; border-radius: 999px; padding: 0 7px; margin-left: 6px; vertical-align: 1px; }
+.empty-note { color: var(--muted); font-style: italic; }
+.error { background: var(--bad-soft); color: var(--bad); padding: 16px; border-radius: var(--radius); }
+
+/* Structure diagram */
+.diagram { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 8px; }
+.diagram-col { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+.diagram-box { background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 13px; }
+.diagram-box .lbl { display: block; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 3px; }
+.diagram-box .val { color: var(--ink); font-weight: 600; }
+.diagram-box .sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+.diagram-arrow { display: flex; justify-content: center; color: var(--muted); font-size: 14px; line-height: 1; margin: 4px 0; }
+.diagram-box.campaign { background: var(--accent-soft); border-color: var(--accent); }
+
+/* Copyable text blocks */
+.copyblock { background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin: 8px 0; }
+.copyblock-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+.copyblock-head span { font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.copyblock p, .copyblock ul { margin: 0; color: var(--ink); font-size: 14px; }
+.copyblock ul { padding-left: 18px; }
+.copy-btn { font-size: 12px; font-weight: 600; color: var(--accent); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; cursor: pointer; flex: none; }
+.copy-btn:hover { border-color: var(--accent); }
+
+.angle-card h3.angle-name { font-size: 17px; margin-top: 0; }
+.belief { color: var(--muted); font-size: 13px; margin: 0 0 10px; }
+
+.checklist { list-style: none; padding: 0 !important; margin: 0; }
+.checklist li { display: flex; align-items: flex-start; gap: 10px; padding: 7px 4px; border-bottom: 1px solid var(--line); }
+.checklist li:last-child { border-bottom: none; }
+.checklist input[type="checkbox"] { margin-top: 3px; flex: none; width: 16px; height: 16px; accent-color: var(--accent); }
+.checklist li.done span { color: var(--muted); text-decoration: line-through; }
+
+.toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(20px); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; opacity: 0; transition: .25s; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateX(-50%); }
+@media print { .actions, nav.chips, .copy-btn { display: none; } body { background: #fff; } .card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<script id="meta-ads-strategist-data" type="application/json">
+{
+  "bisnes": "Nama Bisnes",
+  "tarikh": "2026-01-01",
+  "objective": { "pilihan": "", "sebab": "" },
+  "bajet": { "bulanan": 0, "test_harian_setiap_kempen": 0, "mata_wang": "RM" },
+  "tempoh_test": { "minimum_hari": 0, "minimum_belanja_setiap_iklan": 0, "andaian": true },
+  "struktur": { "label": "", "konsep": "", "kempen": [] },
+  "angles": [],
+  "ukuran": { "apa_dipantau": [], "bila_nilai": "", "langkah_seterusnya": "Jalankan skill meta-ads-strategist untuk hasilkan pelan penuh." },
+  "checklist": [],
+  "andaian": [],
+  "cadangan_brain": []
+}
+</script>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Pelan Meta Ads</p>
+      <h1 id="title">Pelan Meta Ads</h1>
+      <p class="meta" id="updated"></p>
+    </div>
+    <div class="actions">
+      <button type="button" id="copyAll">Salin semua angle</button>
+    </div>
+  </header>
+  <section class="summary" id="summary" aria-label="Ringkasan"></section>
+  <nav class="chips" id="chips" aria-label="Bahagian pelan"></nav>
+  <main class="grid" id="grid"></main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  let DATA;
+  try {
+    DATA = JSON.parse(document.getElementById("meta-ads-strategist-data").textContent);
+  } catch (e) {
+    document.getElementById("grid").innerHTML = `<div class="error card wide">Data pelan tidak sah (JSON rosak): ${escHtml(String(e.message || e))}</div>`;
+    DATA = null;
+  }
+
+  const COPY_TEXTS = [];
+  const ANGLE_ALL_TEXTS = [];
+  function registerCopy(text) { COPY_TEXTS.push(text); return COPY_TEXTS.length - 1; }
+
+  function escHtml(s) {
+    return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function fmtDate(d) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(String(d || ""))) return d || "";
+    const bulan = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogos", "Sep", "Okt", "Nov", "Dis"];
+    const [y, m, day] = d.split("-").map(Number);
+    return `${day} ${bulan[m - 1]} ${y}`;
+  }
+
+  function money(v, currency) {
+    if (v === "" || v == null || isNaN(v)) return "";
+    return `${currency || "RM"}${Number(v).toLocaleString("en-MY")}`;
+  }
+
+  function copyBlock(label, text, bodyHtml) {
+    const idx = registerCopy(text);
+    return `<div class="copyblock">
+      <div class="copyblock-head"><span>${escHtml(label)}</span><button type="button" class="copy-btn" data-idx="${idx}">Salin</button></div>
+      ${bodyHtml}
+    </div>`;
+  }
+
+  function renderSummary(d) {
+    const totalHarian = (d.bajet.test_harian_setiap_kempen || 0) * (d.struktur.kempen || []).length;
+    document.getElementById("summary").innerHTML = `
+      <div class="stat"><b>${escHtml(d.objective.pilihan || "-")}</b><span>Objective</span></div>
+      <div class="stat"><b>${escHtml(money(d.bajet.bulanan, d.bajet.mata_wang) || "-")}</b><span>Bajet bulanan</span></div>
+      <div class="stat"><b>${escHtml(money(totalHarian, d.bajet.mata_wang) || "-")}/hari</b><span>Bajet test keseluruhan (${(d.struktur.kempen || []).length} kempen)</span></div>
+      <div class="stat"><b>${escHtml(d.tempoh_test.minimum_hari || "-")} hari</b><span>Minimum sebelum nilai${d.tempoh_test.andaian ? ' <span class="tag">andaian</span>' : ""}</span></div>`;
+  }
+
+  function renderChips(sections) {
+    document.getElementById("chips").innerHTML = sections.map(s => `<a href="#s${escHtml(s.id)}">${escHtml(s.label)}</a>`).join("");
+  }
+
+  function renderOverview(d) {
+    return `<section class="card wide" id="s1">
+      <h2><span class="num">1</span>Ringkasan pelan</h2>
+      <p><b>Objective:</b> ${escHtml(d.objective.pilihan || "(belum ditentukan)")}</p>
+      <p>${escHtml(d.objective.sebab || "")}</p>
+      <p><b>Bajet:</b> ${escHtml(money(d.bajet.bulanan, d.bajet.mata_wang))} sebulan, ${escHtml(money(d.bajet.test_harian_setiap_kempen, d.bajet.mata_wang))} sehari setiap kempen test.</p>
+      <p><b>Struktur:</b> ${escHtml(d.struktur.label || "-")}</p>
+      <p><b>Konsep:</b> ${escHtml(d.struktur.konsep || "-")}</p>
+    </section>`;
+  }
+
+  function renderDiagram(d) {
+    const kempen = d.struktur.kempen || [];
+    if (!kempen.length) return `<section class="card wide" id="s2"><h2><span class="num">2</span>Struktur campaign</h2><p class="empty-note">Tiada struktur lagi.</p></section>`;
+    const cols = kempen.map(k => `
+      <div class="diagram-col">
+        <div class="diagram-box campaign"><span class="lbl">Campaign · ${escHtml(k.bajet_jenis || "")}</span><span class="val">${escHtml(k.nama || "-")}</span><span class="sub">${escHtml(k.objective || "")} · ${escHtml(money(k.bajet_harian, d.bajet.mata_wang))}/hari</span></div>
+        <div class="diagram-arrow">↓</div>
+        <div class="diagram-box"><span class="lbl">Ad set</span><span class="val">${escHtml((k.ad_set && k.ad_set.nama) || "-")}</span><span class="sub">${escHtml((k.ad_set && k.ad_set.sasaran) || "")}</span></div>
+        <div class="diagram-arrow">↓</div>
+        <div class="diagram-box"><span class="lbl">Ad</span><span class="val">${escHtml((k.ad_set && k.ad_set.iklan && k.ad_set.iklan.nama) || "-")}</span><span class="sub">Angle: ${escHtml(k.angle_rujukan || "")}</span></div>
+      </div>`).join("");
+    return `<section class="card wide" id="s2">
+      <h2><span class="num">2</span>Struktur campaign</h2>
+      <p class="belief">${escHtml(d.struktur.label || "")}</p>
+      <div class="diagram">${cols}</div>
+    </section>`;
+  }
+
+  function renderAngle(a, i) {
+    const hooksHtml = "<ul>" + (a.hooks || []).map(h => `<li>${escHtml(h)}</li>`).join("") + "</ul>";
+    const hooksText = (a.hooks || []).join("\n");
+    const brief = a.brief_kreatif || {};
+    const allText = [
+      `Angle: ${a.nama || ""}`,
+      `Kepercayaan disasar: ${a.kepercayaan_disasar || ""}`,
+      `Hook:\n${hooksText}`,
+      `Teks utama:\n${a.teks_utama || ""}`,
+      `Headline: ${a.headline || ""}`,
+      `Brief imej: ${brief.imej || ""}`,
+      `Brief video: ${brief.video || ""}`
+    ].join("\n\n");
+    ANGLE_ALL_TEXTS.push(allText);
+    return `<section class="card wide angle-card" id="s-angle-${i}">
+      <h2><span class="num">${3 + i}</span>Angle ${i + 1}: ${escHtml(a.nama || "-")}<button type="button" class="copy-btn" style="margin-left:auto" data-idx="${registerCopy(allText)}">Salin semua</button></h2>
+      <p class="belief"><b>Kepercayaan disasar:</b> ${escHtml(a.kepercayaan_disasar || "")}</p>
+      ${copyBlock("3 hook", hooksText, hooksHtml)}
+      ${copyBlock("Teks utama", a.teks_utama || "", `<p>${escHtml(a.teks_utama || "")}</p>`)}
+      ${copyBlock("Headline", a.headline || "", `<p>${escHtml(a.headline || "")}</p>`)}
+      <h3>Brief kreatif</h3>
+      <p><b>Imej:</b> ${escHtml(brief.imej || "")}</p>
+      <p><b>Video:</b> ${escHtml(brief.video || "")}</p>
+    </section>`;
+  }
+
+  function renderUkuran(d) {
+    const u = d.ukuran || {};
+    return `<section class="card wide" id="s-ukuran">
+      <h2><span class="num">•</span>Ukuran & bila nilai</h2>
+      <p><b>Apa dipantau:</b> ${(u.apa_dipantau || []).map(escHtml).join(", ") || "-"}</p>
+      <p><b>Bila nilai:</b> ${escHtml(u.bila_nilai || "-")}${d.tempoh_test.andaian ? ' <span class="tag">andaian</span>' : ""}</p>
+      <p>${escHtml(u.langkah_seterusnya || "")}</p>
+    </section>`;
+  }
+
+  function renderChecklist(d) {
+    const items = d.checklist || [];
+    if (!items.length) return `<section class="card wide" id="s-checklist"><h2><span class="num">✓</span>Checklist pelancaran</h2><p class="empty-note">Tiada item checklist.</p></section>`;
+    return `<section class="card wide" id="s-checklist">
+      <h2><span class="num">✓</span>Checklist pelancaran</h2>
+      <ul class="checklist">${items.map((it, i) => `<li id="chk-${i}"><input type="checkbox" data-chk="${i}"><span>${escHtml(it)}</span></li>`).join("")}</ul>
+    </section>`;
+  }
+
+  function renderBrain(d) {
+    const andaian = d.andaian || [];
+    const cadangan = d.cadangan_brain || [];
+    return `<section class="card wide" id="s-brain">
+      <h2><span class="num">?</span>Andaian & cadangan untuk brain</h2>
+      ${andaian.length ? `<h3>Andaian dalam pelan ini</h3><ul>${andaian.map(a => `<li><span class="tag">andaian</span> ${escHtml(a)}</li>`).join("")}</ul>` : ""}
+      ${cadangan.length ? `<h3>Tambah ke bahagian 6 (Iklan) marketing-brain.md</h3><ul>${cadangan.map(c => `<li>${escHtml(c)}</li>`).join("")}</ul>` : `<p class="empty-note">Tiada cadangan tambahan buat masa ini.</p>`}
+    </section>`;
+  }
+
+  function render() {
+    const d = DATA;
+    document.getElementById("title").textContent = d.bisnes ? `Pelan Meta Ads: ${d.bisnes}` : "Pelan Meta Ads";
+    document.title = document.getElementById("title").textContent;
+    document.getElementById("updated").textContent = d.tarikh ? `Dijana ${fmtDate(d.tarikh)}` : "";
+
+    renderSummary(d);
+
+    const sections = [
+      { id: "1", label: "Ringkasan" },
+      { id: "2", label: "Struktur" },
+      ...(d.angles || []).map((a, i) => ({ id: `angle-${i}`, label: a.nama || `Angle ${i + 1}` })),
+      { id: "ukuran", label: "Ukuran" },
+      { id: "checklist", label: "Checklist" },
+      { id: "brain", label: "Brain" }
+    ];
+    renderChips(sections);
+
+    const parts = [renderOverview(d), renderDiagram(d)];
+    (d.angles || []).forEach((a, i) => parts.push(renderAngle(a, i)));
+    parts.push(renderUkuran(d), renderChecklist(d), renderBrain(d));
+    document.getElementById("grid").innerHTML = parts.join("");
+
+    document.getElementById("copyAll").addEventListener("click", () => {
+      doCopy(ANGLE_ALL_TEXTS.length ? ANGLE_ALL_TEXTS.join("\n\n---\n\n") : "Tiada angle untuk disalin.");
+    });
+
+    document.querySelectorAll(".checklist input[type=checkbox]").forEach(cb => {
+      cb.addEventListener("change", () => {
+        cb.closest("li").classList.toggle("done", cb.checked);
+      });
+    });
+
+    document.getElementById("grid").addEventListener("click", (ev) => {
+      const btn = ev.target.closest(".copy-btn");
+      if (!btn) return;
+      const idx = Number(btn.dataset.idx);
+      if (!isNaN(idx) && COPY_TEXTS[idx] != null) doCopy(COPY_TEXTS[idx]);
+    });
+  }
+
+  function toast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove("show"), 1800);
+  }
+  async function doCopy(text) {
+    try { await navigator.clipboard.writeText(text); toast("Disalin"); }
+    catch (e) {
+      const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); toast("Disalin"); } catch (e2) { toast("Tak dapat salin. Pilih teks secara manual."); }
+      ta.remove();
+    }
+  }
+
+  if (DATA) {
+    try {
+      render();
+    } catch (e) {
+      document.getElementById("grid").innerHTML = `<div class="error card wide">Paparan gagal: ${escHtml(String(e.message || e))}</div>`;
+    }
+  }
+})();
+</script>
+</body>
+</html>

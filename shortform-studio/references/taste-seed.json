@@ -1,0 +1,108 @@
+{
+  "rules": [
+    {
+      "id": "r1",
+      "text": "Keep one consistent visual style across a batch (same theme colours, same font, same layout profile). Don't change style mid-batch without a reason.",
+      "status": "active",
+      "author": "director",
+      "source": null,
+      "created": null
+    },
+    {
+      "id": "r2",
+      "text": "Speaker first. Don't force something into every moment -- many stretches should be just the speaker + captions.",
+      "status": "active",
+      "author": "director",
+      "source": null,
+      "created": null
+    },
+    {
+      "id": "r3",
+      "text": "On-screen text repeats what the speaker is saying at that moment: short, one idea at a time.",
+      "status": "active",
+      "author": "director",
+      "source": null,
+      "created": null
+    },
+    {
+      "id": "r4",
+      "text": "No complicated worked examples or mock UIs invented for the clip. They make people read and confuse the topic.",
+      "status": "active",
+      "author": "director",
+      "source": null,
+      "created": null
+    },
+    {
+      "id": "r5",
+      "text": "Never invent content -- no made-up end cards, steps or claims. Everything on screen comes from the recording.",
+      "status": "active",
+      "author": "director",
+      "source": null,
+      "created": null
+    },
+    {
+      "id": "r6",
+      "text": "Cut filler phrases and dead pauses where there is a clean gap; never clip a word in half.",
+      "status": "active",
+      "author": "director",
+      "source": null,
+      "created": null
+    },
+    {
+      "id": "r7",
+      "text": "Images/pop-ins are welcome when literal to the words being said. Brief full-screen moments may hide the speaker for a beat.",
+      "status": "active",
+      "author": "director",
+      "source": null,
+      "created": null
+    },
+    {
+      "id": "r8",
+      "text": "Don't be afraid of duration -- be afraid of unnecessary or boring parts. Add context that makes a point land, even if it makes the clip longer.",
+      "status": "active",
+      "author": "director",
+      "source": null,
+      "created": null
+    },
+    {
+      "id": "r9",
+      "text": "Title on screen from frame 0 when the clip needs framing to be understood cold.",
+      "status": "active",
+      "author": "director",
+      "source": null,
+      "created": null
+    },
+    {
+      "id": "r10",
+      "text": "Subtle SFX only (whoosh, pop, soft click, typing), well under the voice. Sound off by default until the user supplies SFX files.",
+      "status": "active",
+      "author": "director",
+      "source": null,
+      "created": null
+    },
+    {
+      "id": "r11",
+      "text": "Give numbers and references their context (a bare year or stat needs a one-line label). Drop lines a viewer can't parse rather than leaving them unclear.",
+      "status": "active",
+      "author": "director",
+      "source": null,
+      "created": null
+    },
+    {
+      "id": "r12",
+      "text": "The opening must be paid off inside the clip -- never open on a question only answered outside it. Cut repetition: when the speaker says the same point twice, keep one version.",
+      "status": "active",
+      "author": "director",
+      "source": null,
+      "created": null
+    },
+    {
+      "id": "r13",
+      "text": "When teaching from a live screen share, keep the screen recording visible for the whole relevant stretch, zoomed to what is being discussed so it reads on a phone. Keep the speaker visible too (a smaller card is fine).",
+      "status": "active",
+      "author": "director",
+      "source": null,
+      "created": null
+    }
+  ]
+}

@@ -13,7 +13,7 @@ cd "$root"
 for dir in */; do
   skill="${dir%/}"
   [ -f "$skill/SKILL.md" ] || continue
-  zip -rq "$dist/$skill.zip" "$skill" -x "*.DS_Store"
+  zip -rq "$dist/$skill.zip" "$skill" -x "*.DS_Store" "*__pycache__*" "*.pyc"
 done
 ls -l "$dist"
 

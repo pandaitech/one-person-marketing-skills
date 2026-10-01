@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audit Akaun — Meta Ads Analyst</title>
+<!--
+  Meta Ads Analyst — Audit akaun viewer (7 seksyen).
+  AGENT: copy this file unchanged. Replace ONLY the text inside
+  <script id="meta-ads-audit-data" type="application/json"> ... </script>
+  with one JSON object following references/format-audit.md.
+  Write any "</script" inside string values as "<\/script".
+-->
+<style>
+:root {
+  --bg: #F7F6F2; --surface: #FFFFFF; --soft: #EFEDE6; --ink: #151A1A; --body: #3D4545; --muted: #6A7373; --line: #E3E0D8;
+  --accent: #7A3E7A; --accent-soft: #F4EBF4; --warn: #8A5A00; --warn-soft: #FBF1DC; --good: #1F6B47; --good-soft: #E5F3EB; --bad: #A33A2E; --bad-soft: #FBE9E6;
+  --radius: 14px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1414; --surface: #161D1D; --soft: #1E2727; --ink: #EEECE6; --body: #C8D0CF; --muted: #93A0A0; --line: #283333;
+    --accent: #D3A6D3; --accent-soft: #2D2231; --warn: #E6C07A; --warn-soft: #30270F; --good: #86D1A8; --good-soft: #15291E; --bad: #F0A39A; --bad-soft: #321A17;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1414; --surface: #161D1D; --soft: #1E2727; --ink: #EEECE6; --body: #C8D0CF; --muted: #93A0A0; --line: #283333;
+  --accent: #D3A6D3; --accent-soft: #2D2231; --warn: #E6C07A; --warn-soft: #30270F; --good: #86D1A8; --good-soft: #15291E; --bad: #F0A39A; --bad-soft: #321A17;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--body); font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 32px 16px 80px; }
+header.top { margin-bottom: 20px; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+h1 { margin: 0; color: var(--ink); font-size: clamp(26px, 5vw, 40px); line-height: 1.1; letter-spacing: -.02em; }
+.meta { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+section.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; margin: 0 0 20px; }
+section.card h2 { display: flex; align-items: baseline; gap: 10px; margin: 0 0 4px; color: var(--ink); font-size: 18px; letter-spacing: -.01em; }
+section.card h2 .num { color: var(--muted); font-size: 13px; font-weight: 600; }
+.insight { color: var(--body); font-size: 15px; margin: 2px 0 16px; }
+details.more { margin-top: 12px; }
+details.more summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--accent); list-style: none; }
+details.more summary::-webkit-details-marker { display: none; }
+details.more summary::before { content: "▸ "; }
+details.more[open] summary::before { content: "▾ "; }
+details.more .detail-body { font-size: 14px; color: var(--body); margin-top: 8px; white-space: pre-line; }
+.chip-empty { display: inline-flex; align-items: center; font-size: 12px; font-weight: 600; color: var(--muted); background: var(--soft); border-radius: 999px; padding: 4px 12px; }
+
+/* Section 1: gambaran */
+.bignums { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 0 0 18px; }
+.bignum { background: var(--soft); border-radius: var(--radius); padding: 14px 16px; }
+.bignum b { display: block; color: var(--ink); font-size: 26px; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.bignum span { color: var(--muted); font-size: 12.5px; }
+.chartbox { width: 100%; overflow: hidden; }
+.chartbox svg { width: 100%; height: auto; display: block; }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); margin: 10px 0 0; }
+.legend .dot { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+
+/* Section 2: struktur */
+.structgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.schip { background: var(--soft); border-radius: 10px; padding: 10px 12px; text-align: center; }
+.schip b { display: block; color: var(--ink); font-size: 22px; font-variant-numeric: tabular-nums; }
+.schip span { color: var(--muted); font-size: 11.5px; text-transform: uppercase; letter-spacing: .03em; }
+.barrow { margin: 10px 0; }
+.barrow .lbl { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--muted); margin-bottom: 4px; }
+.stackbar { display: flex; height: 18px; border-radius: 6px; overflow: hidden; background: var(--soft); }
+.stackbar span { height: 100%; }
+
+/* Section 3: best/worst ads */
+.adbars { display: flex; flex-direction: column; gap: 8px; }
+.adbar-group-title { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 14px 0 8px; }
+.adbar-group-title:first-child { margin-top: 0; }
+.adbar { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; }
+.adbar img.thumb { width: 28px; height: 28px; border-radius: 6px; object-fit: cover; background: var(--soft); }
+.adbar .thumb-empty { width: 28px; height: 28px; border-radius: 6px; background: var(--soft); }
+.adbar .track { position: relative; height: 22px; background: var(--soft); border-radius: 6px; overflow: hidden; }
+.adbar .fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 6px; }
+.adbar .fill.good { background: var(--good); }
+.adbar .fill.bad { background: var(--bad); }
+.adbar .name { position: absolute; left: 8px; top: 0; height: 100%; display: flex; align-items: center; font-size: 12.5px; font-weight: 600; color: var(--ink); max-width: calc(100% - 16px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; mix-blend-mode: difference; }
+.adbar .val { font-size: 13px; font-variant-numeric: tabular-nums; color: var(--ink); white-space: nowrap; text-align: right; }
+
+/* Section 4: corak menang */
+table.corak { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+table.corak th, table.corak td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.corak th { color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .03em; white-space: nowrap; }
+table.corak tr:last-child td { border-bottom: none; }
+.tag { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 600; color: var(--ink); background: var(--accent-soft); border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.corak-cards { display: none; flex-direction: column; gap: 10px; }
+.ccard { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+@media (max-width: 640px) { table.corak { display: none; } .corak-cards { display: flex; } }
+
+/* Section 5: titik perubahan */
+.marker-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+.marker-chip { font-size: 12.5px; font-weight: 600; color: var(--warn); background: var(--warn-soft); border-radius: 999px; padding: 4px 10px; }
+
+/* Section 6: pembaziran */
+.wastebig { text-align: center; background: var(--bad-soft); border-radius: var(--radius); padding: 20px; margin-bottom: 18px; }
+.wastebig b { display: block; color: var(--bad); font-size: 34px; font-variant-numeric: tabular-nums; }
+.wastebig span { color: var(--muted); font-size: 13px; }
+
+/* Section 7: kesimpulan */
+.lessons { list-style: none; margin: 0 0 16px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.lessons li { background: var(--soft); border-radius: 10px; padding: 10px 14px; font-size: 14.5px; color: var(--ink); }
+.lessons li b { color: var(--accent); margin-right: 6px; }
+.targetcard { background: var(--good-soft); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 18px; }
+.targetcard b { display: block; color: var(--good); font-size: 28px; font-variant-numeric: tabular-nums; }
+.targetcard span { color: var(--muted); font-size: 13px; }
+.ideas { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.ideacard { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.ideacard .ititle { font-weight: 700; color: var(--ink); font-size: 14px; margin-bottom: 4px; }
+.ideacard .idesc { font-size: 13px; color: var(--muted); }
+
+.error { background: var(--bad-soft); color: var(--bad); padding: 16px; border-radius: var(--radius); }
+@media print { section.card { break-inside: avoid; } }
+@media (max-width: 480px) {
+  .wrap { padding: 20px 14px 60px; }
+  section.card { padding: 16px 16px; }
+}
+</style>
+</head>
+<body>
+<script id="meta-ads-audit-data" type="application/json">
+{
+  "mode": "audit",
+  "business": "Nama Bisnes",
+  "produk": "Nama produk",
+  "currency": "RM",
+  "period": { "from": "2026-01-01", "to": "2026-03-31", "days": 90 },
+  "gambaran": { "spend": 0, "result": 0, "cost_per_result": 0, "monthly": [], "insight": "Tiada data lagi untuk tempoh ini." }
+}
+</script>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Meta Ads Analyst — Audit Akaun</p>
+    <h1 id="title">Audit Akaun</h1>
+    <p class="meta meta-row" id="metarow"></p>
+  </header>
+  <main id="main"></main>
+</div>
+
+<script>
+(function () {
+  const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const RAW_TEXT = document.getElementById("meta-ads-audit-data").textContent.replace(/<\\\/script/gi, "</script").trim();
+
+  function money(cur, n) {
+    if (n == null || isNaN(n)) return "-";
+    return `${esc(cur || "RM")}${Number(n).toLocaleString("en-MY", { maximumFractionDigits: 2 })}`;
+  }
+  function num(n, d) {
+    if (n == null || isNaN(n)) return "-";
+    return Number(n).toLocaleString("en-MY", { maximumFractionDigits: d == null ? 0 : d });
+  }
+  function pct(n, d) {
+    if (n == null || isNaN(n)) return "-";
+    return Number(n).toFixed(d == null ? 1 : d) + "%";
+  }
+  const empty = (label) => `<span class="chip-empty">${esc(label || "Tiada data")}</span>`;
+  const hasRows = (a) => Array.isArray(a) && a.length > 0;
+
+  function detailsBlock(detail) {
+    if (!detail) return "";
+    return `<details class="more"><summary>Lihat butiran</summary><div class="detail-body">${esc(detail)}</div></details>`;
+  }
+  function sectionHead(title, data) {
+    const insight = data && data.insight ? `<p class="insight">${esc(data.insight)}</p>` : "";
+    return { insight, detail: detailsBlock(data && data.detail) };
+  }
+
+  // ---------- small SVG chart helpers ----------
+  function svgWrap(inner, vbW, vbH) {
+    return `<div class="chartbox"><svg viewBox="0 0 ${vbW} ${vbH}" xmlns="http://www.w3.org/2000/svg" role="img">${inner}</svg></div>`;
+  }
+  function scaleFn(min, max, outMin, outMax) {
+    const span = (max - min) || 1;
+    return v => outMin + ((v - min) / span) * (outMax - outMin);
+  }
+  function pathFromPoints(pts) {
+    return pts.map((p, i) => (i === 0 ? "M" : "L") + p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+  }
+
+  // Combo chart: bars (series A) + line (series B), each own scale.
+  function comboChart(months, barKey, lineKey, cur) {
+    const W = 640, H = 210, padL = 44, padR = 10, padT = 14, padB = 26;
+    const plotW = W - padL - padR, plotH = H - padT - padB;
+    const n = months.length;
+    if (!n) return "";
+    const barVals = months.map(m => Number(m[barKey]) || 0);
+    const lineVals = months.map(m => (m[lineKey] == null ? null : Number(m[lineKey])));
+    const lineValsClean = lineVals.filter(v => v != null);
+    const barMax = Math.max(1, ...barVals) * 1.15;
+    const lineMax = Math.max(1, ...lineValsClean) * 1.25;
+    const x = scaleFn(0, Math.max(1, n - 1), padL + 14, padL + plotW - 14);
+    const yBar = scaleFn(0, barMax, padT + plotH, padT);
+    const yLine = scaleFn(0, lineMax, padT + plotH, padT);
+    const bw = Math.min(26, (plotW / n) * 0.42);
+
+    let bars = "";
+    months.forEach((m, i) => {
+      const bx = x(i) - bw / 2, by = yBar(barVals[i]);
+      bars += `<rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${bw.toFixed(1)}" height="${(padT + plotH - by).toFixed(1)}" rx="3" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1" opacity="0.85"/>`;
+    });
+
+    const pts = [];
+    months.forEach((m, i) => { if (lineVals[i] != null) pts.push([x(i), yLine(lineVals[i])]); });
+    let line = "";
+    if (pts.length > 1) line += `<path d="${pathFromPoints(pts)}" fill="none" stroke="var(--bad)" stroke-width="2.5"/>`;
+    pts.forEach(p => { line += `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.5" fill="var(--bad)"/>`; });
+
+    let labels = "";
+    months.forEach((m, i) => {
+      if (n > 8 && i % 2 === 1) return;
+      labels += `<text x="${x(i).toFixed(1)}" y="${H - 6}" font-size="10.5" fill="var(--muted)" text-anchor="middle">${esc(m.label)}</text>`;
+    });
+    const axisLine = `<line x1="${padL}" y1="${padT + plotH}" x2="${W - padR}" y2="${padT + plotH}" stroke="var(--line)" stroke-width="1"/>`;
+
+    return svgWrap(axisLine + bars + line + labels, W, H);
+  }
+
+  // Normalized multi-line chart (each series min-max scaled 0..1) with markers.
+  function trendChart(months, seriesDefs, markers) {
+    const W = 640, H = 210, padL = 14, padR = 14, padT = 14, padB = 26;
+    const plotW = W - padL - padR, plotH = H - padT - padB;
+    const n = months.length;
+    if (!n) return "";
+    const x = scaleFn(0, Math.max(1, n - 1), padL + 6, padL + plotW - 6);
+    let out = "";
+    seriesDefs.forEach(sd => {
+      const vals = months.map(m => (m[sd.key] == null ? null : Number(m[sd.key])));
+      const clean = vals.filter(v => v != null);
+      if (!clean.length) return;
+      const lo = Math.min(...clean), hi = Math.max(...clean);
+      const y = scaleFn(lo, hi, padT + plotH - 6, padT + 6);
+      const pts = [];
+      vals.forEach((v, i) => { if (v != null) pts.push([x(i), (lo === hi) ? (padT + plotH / 2) : y(v)]); });
+      if (pts.length > 1) out += `<path d="${pathFromPoints(pts)}" fill="none" stroke="${sd.color}" stroke-width="2.5" opacity="0.95"/>`;
+      pts.forEach(p => { out += `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3" fill="${sd.color}"/>`; });
+    });
+    // markers as vertical dashed lines at matching month index
+    (markers || []).forEach(mk => {
+      const idx = months.findIndex(m => m.label === mk.label);
+      if (idx < 0) return;
+      const mx = x(idx);
+      out += `<line x1="${mx.toFixed(1)}" y1="${padT}" x2="${mx.toFixed(1)}" y2="${padT + plotH}" stroke="var(--warn)" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+    });
+    let labels = "";
+    months.forEach((m, i) => {
+      if (n > 8 && i % 2 === 1) return;
+      labels += `<text x="${x(i).toFixed(1)}" y="${H - 6}" font-size="10.5" fill="var(--muted)" text-anchor="middle">${esc(m.label)}</text>`;
+    });
+    return svgWrap(out + labels, W, H);
+  }
+
+  function legendRow(items) {
+    return `<div class="legend">${items.map(it => `<span><span class="dot" style="background:${it.color}"></span>${esc(it.label)}</span>`).join("")}</div>`;
+  }
+
+  // ---------- section renderers ----------
+  function renderGambaran(d) {
+    if (!d) return `<section class="card"><h2>1. Gambaran</h2>${empty()}</section>`;
+    const { insight, detail } = sectionHead(null, d);
+    const cards = [
+      ["spend", money(DATA.currency, d.spend), "Jumlah belanja"],
+      ["result", num(d.result), "Jumlah result"],
+      ["cpr", money(DATA.currency, d.cost_per_result), "Kos setiap result"],
+      ["roas", d.roas != null ? `${num(d.roas, 2)}x` : null, "ROAS"]
+    ];
+    const bignums = cards.filter(c => c[1] != null).map(c =>
+      `<div class="bignum"><b>${c[1]}</b><span>${esc(c[2])}</span></div>`).join("");
+    const chart = hasRows(d.monthly)
+      ? comboChart(d.monthly, "spend", "cost_per_result", DATA.currency) +
+        legendRow([{ color: "var(--accent)", label: "Belanja (bar)" }, { color: "var(--bad)", label: "Kos/result (garis)" }])
+      : `<p>${empty("Tiada data bulanan")}</p>`;
+    return `<section class="card">
+      <h2>1. Gambaran</h2>
+      ${insight}
+      <div class="bignums">${bignums || empty()}</div>
+      ${chart}
+      ${detail}
+    </section>`;
+  }
+
+  function renderStruktur(d) {
+    if (!d) return `<section class="card"><h2>2. Struktur</h2>${empty()}</section>`;
+    const { insight, detail } = sectionHead(null, d);
+    const chips = [
+      ["campaigns", d.campaigns, "Kempen"],
+      ["adsets", d.adsets, "Ad set"],
+      ["ads", d.ads, "Iklan"]
+    ].filter(c => c[1] != null).map(c => `<div class="schip"><b>${num(c[1])}</b><span>${esc(c[2])}</span></div>`).join("");
+
+    function stackBar(label, arr, palette) {
+      if (!hasRows(arr)) return "";
+      const total = arr.reduce((s, a) => s + (Number(a.count) || 0), 0) || 1;
+      const segs = arr.map((a, i) => `<span style="width:${(100 * (a.count || 0) / total).toFixed(2)}%; background:${palette[i % palette.length]}" title="${esc(a.label)}: ${num(a.count)}"></span>`).join("");
+      const lbl = arr.map((a, i) => `<span><span class="dot" style="background:${palette[i % palette.length]}"></span>${esc(a.label)} (${num(a.count)})</span>`).join(" &nbsp; ");
+      return `<div class="barrow"><div class="lbl"><span>${esc(label)}</span></div><div class="stackbar">${segs}</div><div class="legend">${lbl}</div></div>`;
+    }
+    const palette1 = ["var(--accent)", "var(--good)", "var(--warn)", "var(--bad)", "var(--muted)"];
+    const palette2 = ["var(--accent)", "var(--soft)"];
+    const bars = stackBar("Objektif", d.objectives, palette1) + stackBar("ABO vs CBO", d.budget_type, palette2);
+
+    return `<section class="card">
+      <h2>2. Struktur</h2>
+      ${insight}
+      <div class="structgrid">${chips || empty()}</div>
+      ${bars || (hasRows(d.objectives) || hasRows(d.budget_type) ? "" : `<p>${empty("Tiada data struktur")}</p>`)}
+      ${detail}
+    </section>`;
+  }
+
+  function renderBestWorst(d) {
+    if (!d) return `<section class="card"><h2>3. Iklan terbaik vs terburuk</h2>${empty()}</section>`;
+    const { insight, detail } = sectionHead(null, d);
+    const cur = DATA.currency;
+    function group(list, cls) {
+      if (!hasRows(list)) return "";
+      const max = Math.max(...list.map(a => Number(a.cost_per_result) || 0), 1);
+      return list.map(a => {
+        const w = Math.max(4, Math.min(100, (Number(a.cost_per_result) || 0) / max * 100));
+        const thumb = a.thumbnail
+          ? `<img class="thumb" src="${esc(a.thumbnail)}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumb-empty'}))">`
+          : `<div class="thumb-empty"></div>`;
+        return `<div class="adbar">
+          ${thumb}
+          <div class="track"><div class="fill ${cls}" style="width:${w.toFixed(1)}%"></div><span class="name">${esc(a.name)}</span></div>
+          <span class="val">${money(cur, a.cost_per_result)}</span>
+        </div>`;
+      }).join("");
+    }
+    const ignoreNote = d.ignore_spend_below != null
+      ? `<p class="meta" style="margin:0 0 10px">Iklan dengan belanja bawah ${money(cur, d.ignore_spend_below)} diabaikan.</p>` : "";
+    const bestHtml = hasRows(d.best) ? `<div class="adbar-group-title">5 terbaik</div><div class="adbars">${group(d.best, "good")}</div>` : "";
+    const worstHtml = hasRows(d.worst) ? `<div class="adbar-group-title">5 terburuk</div><div class="adbars">${group(d.worst, "bad")}</div>` : "";
+    const body = (bestHtml + worstHtml) || `<p>${empty("Tiada data iklan mencukupi")}</p>`;
+    return `<section class="card">
+      <h2>3. Iklan terbaik vs terburuk</h2>
+      ${insight}
+      ${ignoreNote}
+      ${body}
+      ${detail}
+    </section>`;
+  }
+
+  function renderCorak(d) {
+    if (!d) return `<section class="card"><h2>4. Corak menang</h2>${empty()}</section>`;
+    const { insight, detail } = sectionHead(null, d);
+    const rows = Array.isArray(d.rows) ? d.rows : [];
+    const cols = ["hook", "format", "tawaran", "market", "audience"];
+    const colLabel = { hook: "Hook", format: "Format", tawaran: "Tawaran", market: "Market", audience: "Audience" };
+    let body;
+    if (!rows.length) {
+      body = `<p>${empty("Tiada corak dikesan lagi")}</p>`;
+    } else {
+      const thead = `<thead><tr>${cols.map(c => `<th>${esc(colLabel[c])}</th>`).join("")}</tr></thead>`;
+      const tbody = `<tbody>${rows.map(r => `<tr>${cols.map(c => `<td>${r[c] ? `<span class="tag">${esc(r[c])}</span>` : ""}</td>`).join("")}</tr>`).join("")}</tbody>`;
+      const cards = rows.map(r => `<div class="ccard">${cols.filter(c => r[c]).map(c => `<span class="tag">${esc(r[c])}</span>`).join("")}</div>`).join("");
+      body = `<table class="corak">${thead}${tbody}</table><div class="corak-cards">${cards}</div>`;
+    }
+    return `<section class="card">
+      <h2>4. Corak menang</h2>
+      ${insight}
+      ${body}
+      ${detail}
+    </section>`;
+  }
+
+  function renderTitikPerubahan(d) {
+    if (!d) return `<section class="card"><h2>5. Titik perubahan</h2>${empty()}</section>`;
+    const { insight, detail } = sectionHead(null, d);
+    const months = Array.isArray(d.monthly) ? d.monthly : [];
+    let chart, markerChips = "";
+    if (months.length) {
+      const seriesDefs = [
+        { key: "cost_per_result", color: "var(--bad)", label: "Kos/result" },
+        { key: "frequency", color: "var(--warn)", label: "Frequency" },
+        { key: "ctr", color: "var(--accent)", label: "CTR" }
+      ];
+      chart = trendChart(months, seriesDefs, d.markers) + legendRow(seriesDefs);
+      if (hasRows(d.markers)) {
+        markerChips = `<div class="marker-list">${d.markers.map(m => `<span class="marker-chip">${esc(m.label)} — ${esc(m.note || m.reason || "")}</span>`).join("")}</div>`;
+      }
+    } else {
+      chart = `<p>${empty("Tiada data bulanan")}</p>`;
+    }
+    return `<section class="card">
+      <h2>5. Titik perubahan</h2>
+      ${insight}
+      ${chart}
+      ${markerChips}
+      ${detail}
+    </section>`;
+  }
+
+  function renderPembaziran(d) {
+    if (!d) return `<section class="card"><h2>6. Pembaziran</h2>${empty()}</section>`;
+    const { insight, detail } = sectionHead(null, d);
+    const big = d.total_wasted != null
+      ? `<div class="wastebig"><b>${money(DATA.currency, d.total_wasted)}</b><span>Dibelanja tanpa result</span></div>`
+      : `<p>${empty("Tiada data pembaziran")}</p>`;
+    let bars = "";
+    if (hasRows(d.items)) {
+      const max = Math.max(...d.items.map(i => Number(i.spend) || 0), 1);
+      bars = `<div class="adbar-group-title">Iklan paling membazir</div><div class="adbars">${d.items.map(i => {
+        const w = Math.max(4, Math.min(100, (Number(i.spend) || 0) / max * 100));
+        return `<div class="adbar">
+          <div class="thumb-empty"></div>
+          <div class="track"><div class="fill bad" style="width:${w.toFixed(1)}%"></div><span class="name">${esc(i.name)}</span></div>
+          <span class="val">${money(DATA.currency, i.spend)}</span>
+        </div>`;
+      }).join("")}</div>`;
+    }
+    return `<section class="card">
+      <h2>6. Pembaziran</h2>
+      ${insight}
+      ${big}
+      ${bars}
+      ${detail}
+    </section>`;
+  }
+
+  function renderKesimpulan(d) {
+    if (!d) return `<section class="card"><h2>7. Kesimpulan</h2>${empty()}</section>`;
+    const lessons = Array.isArray(d.lessons) ? d.lessons : [];
+    const lessonsHtml = lessons.length
+      ? `<ul class="lessons">${lessons.map((l, i) => `<li><b>${i + 1}.</b>${esc(l)}</li>`).join("")}</ul>`
+      : `<p>${empty("Tiada pengajaran lagi")}</p>`;
+    const t = d.target_cost_per_result;
+    const targetHtml = t && t.value != null
+      ? `<div class="targetcard"><b>${money(DATA.currency, t.value)}</b><span>Sasaran kos/result yang masih untung${t.basis ? " — " + esc(t.basis) : ""}</span></div>`
+      : `<p>${empty("Tiada sasaran kos dikira")}</p>`;
+    const ideas = Array.isArray(d.ideas) ? d.ideas : [];
+    const ideasHtml = ideas.length
+      ? `<div class="ideas">${ideas.map(i => `<div class="ideacard"><div class="ititle">${esc(i.title)}</div><div class="idesc">${esc(i.desc || "")}</div></div>`).join("")}</div>`
+      : `<p>${empty("Tiada idea iklan baru")}</p>`;
+    return `<section class="card">
+      <h2>7. Kesimpulan</h2>
+      ${lessonsHtml}
+      ${targetHtml}
+      ${ideasHtml}
+    </section>`;
+  }
+
+  let DATA = {};
+
+  function render() {
+    let data;
+    try { data = JSON.parse(RAW_TEXT); }
+    catch (e) {
+      document.getElementById("main").innerHTML = `<div class="error card">Data tidak sah (JSON rosak): ${esc(String(e.message || e))}</div>`;
+      return;
+    }
+    DATA = data;
+    document.getElementById("title").textContent = data.business ? `Audit Akaun: ${data.business}` : "Audit Akaun";
+    document.title = data.business ? `Audit Akaun: ${data.business}` : "Audit Akaun";
+    const period = data.period || {};
+    const metaBits = [];
+    if (data.produk) metaBits.push(`<span>Produk: ${esc(data.produk)}</span>`);
+    if (data.filter) metaBits.push(`<span>${esc(data.filter)}</span>`);
+    if (period.from) metaBits.push(`<span>${esc(period.from)} – ${esc(period.to)}${period.days ? ` (${esc(period.days)} hari)` : ""}</span>`);
+    document.getElementById("metarow").innerHTML = metaBits.join("");
+
+    document.getElementById("main").innerHTML =
+      renderGambaran(data.gambaran) +
+      renderStruktur(data.struktur) +
+      renderBestWorst(data.iklan_terbaik_terburuk) +
+      renderCorak(data.corak_menang) +
+      renderTitikPerubahan(data.titik_perubahan) +
+      renderPembaziran(data.pembaziran) +
+      renderKesimpulan(data.kesimpulan);
+  }
+
+  try { render(); } catch (e) { document.getElementById("main").innerHTML = `<div class="error card">Paparan gagal: ${esc(String(e.message || e))}</div>`; }
+})();
+</script>
+</body>
+</html>

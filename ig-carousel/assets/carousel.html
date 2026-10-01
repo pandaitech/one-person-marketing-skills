@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preview IG Carousel</title>
+<!--
+  IG Carousel renderer (skill: ig-carousel).
+  AGENT: copy this file unchanged. Replace ONLY the JSON inside
+  <script id="carousel-data" type="application/json"> ... </script>.
+  Schema: skills/ig-carousel/references/format-carousel.md
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Playfair+Display:wght@700;800&family=DM+Serif+Display&family=Space+Grotesk:wght@500;700&family=Poppins:wght@600;700;800&family=Archivo:wght@700;800&family=Inter:wght@400;500;600;700&family=Work+Sans:wght@400;500;600&family=Lora:wght@400;500;600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" crossorigin="anonymous">
+<style>
+:root {
+  --bg: #F7F6F2; --surface: #FFFFFF; --soft: #EFEDE6; --ink: #151A1A; --body: #3D4545; --muted: #6A7373; --line: #E3E0D8;
+  --accent: #C1502E; --accent-soft: #FBEAE2; --warn: #8A5A00; --warn-soft: #FBF1DC; --good: #1F6B47; --good-soft: #E5F3EB; --bad: #A33A2E; --bad-soft: #FBE9E6;
+  --radius: 14px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1414; --surface: #161D1D; --soft: #1E2727; --ink: #EEECE6; --body: #C8D0CF; --muted: #93A0A0; --line: #283333;
+    --accent: #E28E6E; --accent-soft: #2E1F19; --warn: #E6C07A; --warn-soft: #30270F; --good: #86D1A8; --good-soft: #15291E; --bad: #F0A39A; --bad-soft: #321A17;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1414; --surface: #161D1D; --soft: #1E2727; --ink: #EEECE6; --body: #C8D0CF; --muted: #93A0A0; --line: #283333;
+  --accent: #E28E6E; --accent-soft: #2E1F19; --warn: #E6C07A; --warn-soft: #30270F; --good: #86D1A8; --good-soft: #15291E; --bad: #F0A39A; --bad-soft: #321A17;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--body); font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 32px 16px 96px; }
+header.top { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: flex-end; justify-content: space-between; margin-bottom: 8px; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+h1 { margin: 0; color: var(--ink); font-size: clamp(22px, 4.5vw, 32px); line-height: 1.15; letter-spacing: -.02em; }
+.meta { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+button { font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 9px 16px; cursor: pointer; }
+button:hover { border-color: var(--accent); color: var(--accent); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.primary:hover { opacity: .9; color: #fff; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+.hint { color: var(--muted); font-size: 13px; margin: 8px 0 20px; }
+.banner { background: var(--warn-soft); color: var(--warn); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 16px; font-size: 13px; margin: 0 0 20px; display: none; }
+.banner.show { display: block; }
+.rail { display: flex; gap: 22px; overflow-x: auto; padding: 4px 4px 20px; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
+.card { flex: none; scroll-snap-align: start; display: flex; flex-direction: column; gap: 10px; }
+.thumb { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--soft); box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+.card-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.card-label { font-size: 12px; color: var(--muted); }
+.card-label b { color: var(--ink); }
+.card-foot button { padding: 6px 12px; font-size: 12px; }
+.caption-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; margin-top: 24px; }
+.caption-card h2 { margin: 0 0 8px; color: var(--ink); font-size: 16px; }
+.caption-card p { margin: 0; white-space: pre-wrap; }
+.empty-note { color: var(--muted); font-style: italic; }
+.toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(20px); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; opacity: 0; transition: .25s; pointer-events: none; max-width: 90vw; text-align: center; }
+.toast.show { opacity: 1; transform: translateX(-50%); }
+.error { background: var(--bad-soft); color: var(--bad); padding: 16px; border-radius: var(--radius); }
+@media print { .actions, .card-foot, .banner { display: none; } body { background: #fff; } }
+
+/* ---- 1080x1350 slide canvas (this is the actual exported artwork) ---- */
+.slide {
+  width: 1080px; height: 1350px; position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+  padding: 64px 72px 96px;
+  font-family: var(--body-font, 'Inter', sans-serif);
+  background: var(--slide-bg, #F7F4EC);
+  color: var(--slide-body, #3A3A34);
+}
+.slide * { box-sizing: border-box; }
+.slide .kicker { font-family: var(--body-font, 'Inter', sans-serif); font-size: 28px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--slide-accent, #C1502E); margin: 0 0 22px; }
+.slide .headline { font-family: var(--heading-font, 'Fraunces', serif); font-weight: 700; color: var(--slide-ink, #1B1B18); font-size: 78px; line-height: 1.1; letter-spacing: -.01em; margin: 0 0 28px; }
+.slide .body-text { font-size: 40px; line-height: 1.45; color: var(--slide-body, #3A3A34); margin: 0; }
+.slide .body-text + .body-text { margin-top: 18px; }
+.slide[data-align="center"] { text-align: center; align-items: center; }
+.slide[data-align="center"] .list-row { text-align: left; }
+.slide .content { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; min-height: 0; }
+.slide[data-layout="cover"] .content, .slide[data-layout="quote"] .content { justify-content: center; }
+.slide .footer { position: absolute; left: 72px; right: 72px; bottom: 40px; display: flex; align-items: center; justify-content: space-between; font-size: 24px; color: var(--slide-muted, #8A8578); font-family: var(--body-font, 'Inter', sans-serif); }
+.slide .footer .biz { font-weight: 700; color: var(--slide-ink, #1B1B18); }
+.slide .credit { font-size: 24px; color: var(--slide-muted, #8A8578); margin-top: 20px; }
+
+/* headline auto-fit tiers: default (big-text/list/cta) — shrink only as copy gets longer */
+.slide .headline.fit-xl { font-size: 112px; }
+.slide .headline.fit-l { font-size: 94px; }
+.slide .headline.fit-m { font-size: 78px; }
+.slide .headline.fit-s { font-size: 64px; }
+
+/* cover: headline dominant, largest tier set */
+.slide[data-layout="cover"] .headline.fit-xl { font-size: 128px; }
+.slide[data-layout="cover"] .headline.fit-l { font-size: 106px; }
+.slide[data-layout="cover"] .headline.fit-m { font-size: 88px; }
+.slide[data-layout="cover"] .headline.fit-s { font-size: 74px; }
+.slide[data-layout="cover"] .swipe-hint { position: absolute; left: 72px; bottom: 112px; font-size: 26px; font-weight: 700; color: var(--slide-accent, #C1502E); }
+
+/* list — CSS grid so each row's track height comes from its own content
+   (min-content), never stretched/mismatched by a sibling's box */
+.slide .list { list-style: none; margin: 0; padding: 0; display: grid; grid-auto-rows: min-content; row-gap: 30px; }
+.slide .list-row { display: grid; grid-template-columns: 60px 1fr; column-gap: 20px; align-items: start; }
+.slide .list-num { width: 60px; height: 60px; border-radius: 12px; background: var(--slide-accent-soft, #FBEAE2); color: var(--slide-accent, #C1502E); font-family: var(--heading-font, 'Fraunces', serif); font-weight: 700; font-size: 30px; display: grid; place-items: center; }
+.slide .list-item-text { font-size: 38px; line-height: 1.4; padding-top: 7px; }
+.slide[data-style="how-to"] .list-num { border-radius: 999px; }
+.slide[data-style="listicle"] .list-num { border-radius: 6px; }
+
+/* stat */
+.slide[data-layout="stat"] .stat-value { font-family: var(--heading-font, 'Fraunces', serif); font-weight: 800; font-size: 220px; line-height: 1; color: var(--slide-accent, #C1502E); margin: 0 0 8px; }
+.slide[data-layout="stat"][data-style="data-stats"] .stat-value { font-variant-numeric: tabular-nums; }
+.slide[data-layout="stat"] .stat-label { font-family: var(--heading-font, 'Fraunces', serif); font-weight: 700; font-size: 48px; line-height: 1.25; color: var(--slide-ink, #1B1B18); margin: 0 0 22px; }
+
+/* quote — own fit tiers (smaller than headline since quote-mark + attribution share the block) */
+.slide[data-layout="quote"] .quote-mark { font-family: var(--heading-font, 'Fraunces', serif); font-size: 140px; line-height: .6; color: var(--slide-accent, #C1502E); margin: 0 0 16px; }
+.slide[data-layout="quote"] .headline { font-style: italic; margin-bottom: 0; }
+.slide[data-layout="quote"] .headline.fit-xl { font-size: 88px; }
+.slide[data-layout="quote"] .headline.fit-l { font-size: 74px; }
+.slide[data-layout="quote"] .headline.fit-m { font-size: 62px; }
+.slide[data-layout="quote"] .headline.fit-s { font-size: 52px; }
+.slide[data-layout="quote"] .attribution { font-size: 32px; font-weight: 600; color: var(--slide-muted, #8A8578); margin-top: 28px; }
+
+/* source / citation */
+.slide[data-layout="source"] .kicker { color: var(--slide-muted, #8A8578); }
+.slide[data-layout="source"] .headline { font-size: 56px; }
+.slide[data-layout="source"] .source-note { font-size: 38px; line-height: 1.5; padding: 32px 36px; border-radius: 14px; background: var(--slide-soft, rgba(0,0,0,.04)); border: 1px solid var(--slide-line, rgba(0,0,0,.08)); }
+
+/* cta */
+.slide[data-layout="cta"] .cta-pill { display: inline-block; margin-top: 32px; padding: 24px 48px; border-radius: 999px; background: var(--slide-accent, #C1502E); color: #fff; font-family: var(--heading-font, 'Fraunces', serif); font-weight: 700; font-size: 38px; }
+
+/* decorative treatments */
+.slide .decor { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.slide .content, .slide .kicker, .slide .headline { position: relative; z-index: 1; }
+.slide .footer { z-index: 1; }
+.slide[data-style="clean"] .decor { display: none; }
+.slide[data-decor="corner-mark"] .decor::before {
+  content: ""; position: absolute; top: 0; right: 0; width: 0; height: 0;
+  border-style: solid; border-width: 0 140px 140px 0; border-color: transparent var(--slide-accent-soft, #FBEAE2) transparent transparent;
+}
+.slide[data-decor="halftone-dot"] .decor::before {
+  /* bottom:104px keeps the whole dot field above the reserved 96px footer
+     band (footer band starts at bottom:96px) so it never sits behind the
+     slide-count text */
+  content: ""; position: absolute; right: -40px; bottom: 104px; width: 260px; height: 220px; opacity: .35;
+  background-image: radial-gradient(var(--slide-accent, #C1502E) 4px, transparent 4px);
+  background-size: 22px 22px;
+}
+.slide[data-decor="underline"] .headline { background-image: linear-gradient(var(--slide-accent-soft, #FBEAE2), var(--slide-accent-soft, #FBEAE2)); background-repeat: no-repeat; background-size: 100% 0.32em; background-position: 0 88%; }
+.slide[data-decor="torn-edge"] { clip-path: polygon(0 0,100% 0,100% 96%,97% 98.5%,94% 96.5%,91% 99%,88% 97%,85% 98.8%,82% 96.2%,79% 99.2%,76% 97.4%,73% 98.6%,70% 96%,67% 99%,64% 97.2%,61% 98.8%,58% 96.4%,55% 99%,52% 97%,49% 98.6%,46% 96.2%,43% 99.2%,40% 97%,37% 98.8%,34% 96.4%,31% 99%,28% 97.2%,25% 98.6%,22% 96%,19% 99%,16% 97%,13% 98.8%,10% 96.2%,7% 99.2%,4% 97%,0 98.6%); }
+
+/* story style: airier headline/quote */
+.slide[data-style="story"] .headline { line-height: 1.2; }
+.slide[data-style="story"] .kicker { font-style: italic; letter-spacing: .04em; }
+
+/* preview scaling shell */
+.slide-thumb { overflow: hidden; border-radius: 10px; }
+.slide-scaler { transform-origin: top left; }
+</style>
+</head>
+<body>
+<script id="carousel-data" type="application/json">
+{
+  "business": "Nama Bisnes",
+  "topic": "",
+  "theme": {
+    "background": "#F7F4EC",
+    "surface": "#FFFFFF",
+    "ink": "#1B1B18",
+    "body_color": "#3A3A34",
+    "muted": "#8A8578",
+    "accent": "#C1502E",
+    "heading_font": "Fraunces",
+    "body_font": "Inter",
+    "layout_style": "clean",
+    "align": "left",
+    "decorative": "none"
+  },
+  "slides": [],
+  "caption": ""
+}
+</script>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Preview IG Carousel</p>
+      <h1 id="title">Preview IG Carousel</h1>
+      <p class="meta" id="count"></p>
+    </div>
+    <div class="actions">
+      <button type="button" id="copyCaption">Salin caption</button>
+      <button type="button" id="exportAll" class="primary">Muat turun semua (ZIP)</button>
+    </div>
+  </header>
+  <p class="hint">Scroll atau swipe untuk lihat setiap slide. Setiap kad ialah kanvas 1080×1350 sebenar (dikecilkan untuk paparan) — muat turun untuk dapatkan PNG resolusi penuh.</p>
+  <div class="banner" id="exportBanner">Eksport PNG tidak tersedia dalam paparan ini (skrip disekat oleh persekitaran). Ambil screenshot manual setiap slide sebagai gantinya, atau buka paparan ini dalam tab/browser penuh.</div>
+  <div class="rail" id="rail"></div>
+  <div class="caption-card" id="captionCard" style="display:none">
+    <h2>Caption post</h2>
+    <p id="captionText"></p>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" onerror="window.__htiFailed = true"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" onerror="window.__jszipFailed = true"></script>
+
+<script>
+(function () {
+  let DATA;
+  try {
+    DATA = JSON.parse(document.getElementById("carousel-data").textContent);
+  } catch (e) {
+    document.getElementById("rail").innerHTML = `<div class="error">Data carousel rosak (JSON tidak sah): ${String(e.message || e)}</div>`;
+    return;
+  }
+
+  const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const nl2 = s => esc(s).replace(/\n/g, "<br>");
+  const slides = Array.isArray(DATA.slides) ? DATA.slides.slice() : [];
+  slides.sort((a, b) => (a.number ?? 0) - (b.number ?? 0));
+  const theme = Object.assign({
+    background: "#F7F4EC", surface: "#FFFFFF", ink: "#1B1B18", body_color: "#3A3A34",
+    muted: "#8A8578", accent: "#C1502E", heading_font: "Fraunces", body_font: "Inter",
+    layout_style: "clean", align: "left", decorative: "none"
+  }, DATA.theme || {});
+
+  const FONT_STACKS = {
+    "Fraunces": "'Fraunces', serif", "Playfair Display": "'Playfair Display', serif",
+    "DM Serif Display": "'DM Serif Display', serif", "Lora": "'Lora', serif",
+    "Space Grotesk": "'Space Grotesk', sans-serif", "Poppins": "'Poppins', sans-serif",
+    "Archivo": "'Archivo', sans-serif", "Inter": "'Inter', sans-serif",
+    "Work Sans": "'Work Sans', sans-serif", "Nunito Sans": "'Nunito Sans', sans-serif"
+  };
+  const headingFont = FONT_STACKS[theme.heading_font] || FONT_STACKS["Fraunces"];
+  const bodyFont = FONT_STACKS[theme.body_font] || FONT_STACKS["Inter"];
+
+  document.title = DATA.business ? `Carousel: ${DATA.business}` : "Preview IG Carousel";
+  document.getElementById("title").textContent = DATA.topic ? DATA.topic : (DATA.business ? `Carousel: ${DATA.business}` : "Preview IG Carousel");
+  document.getElementById("count").textContent = slides.length ? `${slides.length} slide · ${DATA.business || ""}` : "";
+
+  function hexToRgba(hex, alpha) {
+    const m = /^#?([0-9a-f]{6}|[0-9a-f]{3})$/i.exec(String(hex || "").trim());
+    if (!m) return `rgba(193,80,46,${alpha})`;
+    let h = m[1];
+    if (h.length === 3) h = h.split("").map(c => c + c).join("");
+    const r = parseInt(h.slice(0,2),16), g = parseInt(h.slice(2,4),16), b = parseInt(h.slice(4,6),16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  function slideVars() {
+    const accentSoft = hexToRgba(theme.accent, .14);
+    return `--heading-font:${headingFont};--body-font:${bodyFont};` +
+      `--slide-bg:${esc(theme.background)};--slide-surface:${esc(theme.surface)};--slide-ink:${esc(theme.ink)};` +
+      `--slide-body:${esc(theme.body_color)};--slide-muted:${esc(theme.muted)};--slide-accent:${esc(theme.accent)};` +
+      `--slide-accent-soft:${accentSoft};--slide-soft:${hexToRgba(theme.ink,.05)};--slide-line:${hexToRgba(theme.ink,.1)};`;
+  }
+
+  // Headline auto-fit: size tiers by copy length, so a short headline fills the
+  // canvas (big) and a long one shrinks just enough to stay legible/non-overfull.
+  function fitClass(text, breaks) {
+    const len = String(text || "").replace(/\n/g, " ").trim().length;
+    if (len <= breaks[0]) return "fit-xl";
+    if (len <= breaks[1]) return "fit-l";
+    if (len <= breaks[2]) return "fit-m";
+    return "fit-s";
+  }
+  const COVER_BREAKS = [40, 70, 105];
+  const PRIMARY_BREAKS = [30, 55, 85];
+  const QUOTE_BREAKS = [36, 64, 95];
+
+  function renderInner(s, i) {
+    const layout = s.layout || "big-text";
+    const kicker = s.kicker ? `<p class="kicker">${esc(s.kicker)}</p>` : "";
+    let body = "";
+    if (layout === "cover" || layout === "big-text") {
+      const fit = fitClass(s.headline, layout === "cover" ? COVER_BREAKS : PRIMARY_BREAKS);
+      body = `<div class="content">${kicker}<h2 class="headline ${fit}">${nl2(s.headline)}</h2>${s.body ? `<p class="body-text">${nl2(s.body)}</p>` : ""}${s.credit ? `<p class="credit">${esc(s.credit)}</p>` : ""}</div>` +
+        (layout === "cover" && i === 0 ? `<div class="swipe-hint">Swipe →</div>` : "");
+    } else if (layout === "list") {
+      const items = Array.isArray(s.items) ? s.items : [];
+      const rows = items.map((it, idx) => {
+        const label = theme.layout_style === "how-to" ? `Langkah ${idx + 1}` : String(idx + 1);
+        return `<li class="list-row"><span class="list-num">${esc(label)}</span><span class="list-item-text">${nl2(it)}</span></li>`;
+      }).join("");
+      const fit = fitClass(s.headline, PRIMARY_BREAKS);
+      body = `<div class="content">${kicker}${s.headline ? `<h2 class="headline ${fit}">${nl2(s.headline)}</h2>` : ""}<ul class="list">${rows}</ul>${s.credit ? `<p class="credit">${esc(s.credit)}</p>` : ""}</div>`;
+    } else if (layout === "stat") {
+      body = `<div class="content">${kicker}<p class="stat-value">${esc(s.stat_value || "")}</p><p class="stat-label">${nl2(s.stat_label || "")}</p>${s.body ? `<p class="body-text">${nl2(s.body)}</p>` : ""}${s.credit ? `<p class="credit">${esc(s.credit)}</p>` : ""}</div>`;
+    } else if (layout === "quote") {
+      const fit = fitClass(s.quote || s.headline, QUOTE_BREAKS);
+      body = `<div class="content"><p class="quote-mark">&ldquo;</p><h2 class="headline ${fit}">${nl2(s.quote || s.headline || "")}</h2>${s.attribution ? `<p class="attribution">— ${esc(s.attribution)}</p>` : ""}</div>`;
+    } else if (layout === "source") {
+      body = `<div class="content">${kicker || `<p class="kicker">Sumber</p>`}${s.headline ? `<h2 class="headline">${nl2(s.headline)}</h2>` : ""}<p class="source-note">${nl2(s.source_note || "")}</p>${s.credit ? `<p class="credit">${esc(s.credit)}</p>` : ""}</div>`;
+    } else if (layout === "cta") {
+      const fit = fitClass(s.headline, PRIMARY_BREAKS);
+      body = `<div class="content">${kicker}<h2 class="headline ${fit}">${nl2(s.headline)}</h2>${s.body ? `<p class="body-text">${nl2(s.body)}</p>` : ""}${s.cta_label ? `<span class="cta-pill">${esc(s.cta_label)}</span>` : ""}</div>`;
+    } else {
+      body = `<div class="content">${kicker}${s.headline ? `<h2 class="headline">${nl2(s.headline)}</h2>` : ""}${s.body ? `<p class="body-text">${nl2(s.body)}</p>` : ""}</div>`;
+    }
+    return body;
+  }
+
+  function slideHTML(s, i, total) {
+    const layout = s.layout || "big-text";
+    const align = theme.align === "center" ? "center" : "left";
+    const decor = theme.decorative && theme.decorative !== "none" ? theme.decorative : "";
+    return `
+      <div class="slide" id="slide-${s.number ?? (i + 1)}" data-layout="${esc(layout)}" data-style="${esc(theme.layout_style)}" data-align="${align}" ${decor ? `data-decor="${esc(decor)}"` : ""} style="${slideVars()}">
+        <div class="decor"></div>
+        ${renderInner(s, i)}
+        <div class="footer">
+          <span class="biz">${esc(DATA.business || "")}</span>
+          <span>${(s.number ?? (i + 1))}/${total}</span>
+        </div>
+      </div>`;
+  }
+
+  function layoutScale() {
+    const isNarrow = window.matchMedia("(max-width: 640px)").matches;
+    const targetW = isNarrow ? Math.min(260, window.innerWidth - 64) : 300;
+    return targetW / 1080;
+  }
+
+  if (!slides.length) {
+    document.getElementById("rail").innerHTML = `<p class="empty-note">Tiada slide lagi. Jalankan skill ig-carousel dengan satu sumber content.</p>`;
+  } else {
+    const scale = layoutScale();
+    const thumbW = Math.round(1080 * scale), thumbH = Math.round(1350 * scale);
+    document.getElementById("rail").innerHTML = slides.map((s, i) => `
+      <div class="card">
+        <div class="thumb slide-thumb" style="width:${thumbW}px;height:${thumbH}px;">
+          <div class="slide-scaler" style="width:1080px;height:1350px;transform:scale(${scale});">
+            ${slideHTML(s, i, slides.length)}
+          </div>
+        </div>
+        <div class="card-foot">
+          <span class="card-label"><b>Slide ${s.number ?? (i + 1)}</b> · ${esc(s.layout || "")}</span>
+          <button type="button" class="export-one" data-n="${s.number ?? (i + 1)}">PNG</button>
+        </div>
+      </div>`).join("");
+  }
+
+  if (DATA.caption) {
+    document.getElementById("captionCard").style.display = "";
+    document.getElementById("captionText").textContent = DATA.caption;
+  }
+
+  function toast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove("show"), 2200);
+  }
+
+  function exportUnavailable() {
+    return typeof window.htmlToImage === "undefined" || window.__htiFailed;
+  }
+  function showExportBanner() {
+    document.getElementById("exportBanner").classList.add("show");
+  }
+  if (exportUnavailable()) showExportBanner();
+
+  async function exportNode(node) {
+    return window.htmlToImage.toPng(node, { cacheBust: true, pixelRatio: 1, width: 1080, height: 1350 });
+  }
+
+  document.getElementById("rail").addEventListener("click", async (ev) => {
+    const btn = ev.target.closest(".export-one");
+    if (!btn) return;
+    if (exportUnavailable()) { showExportBanner(); toast("Eksport PNG tidak tersedia. Cuba screenshot manual."); return; }
+    const n = btn.getAttribute("data-n");
+    const node = document.getElementById(`slide-${n}`);
+    if (!node) return;
+    btn.disabled = true;
+    try {
+      const dataUrl = await exportNode(node);
+      const a = document.createElement("a");
+      a.href = dataUrl; a.download = `slide-${String(n).padStart(2, "0")}.png`;
+      document.body.appendChild(a); a.click(); a.remove();
+      toast(`Slide ${n} dimuat turun`);
+    } catch (e) {
+      showExportBanner();
+      toast("Gagal eksport PNG. Ambil screenshot manual sebagai gantinya.");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById("exportAll").addEventListener("click", async () => {
+    if (!slides.length) return;
+    if (exportUnavailable() || typeof window.JSZip === "undefined" || window.__jszipFailed) {
+      showExportBanner();
+      toast("Eksport ZIP tidak tersedia. Muat turun satu-satu (butang PNG), atau screenshot manual.");
+      return;
+    }
+    const zipBtn = document.getElementById("exportAll");
+    zipBtn.disabled = true;
+    const original = zipBtn.textContent;
+    zipBtn.textContent = "Menjana ZIP…";
+    try {
+      const zip = new window.JSZip();
+      for (const s of slides) {
+        const n = s.number;
+        const node = document.getElementById(`slide-${n}`);
+        if (!node) continue;
+        const dataUrl = await exportNode(node);
+        const base64 = dataUrl.split(",")[1];
+        zip.file(`slide-${String(n).padStart(2, "0")}.png`, base64, { base64: true });
+      }
+      const blob = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = `${(DATA.business || "carousel").toLowerCase().replace(/[^a-z0-9]+/g, "-")}-carousel.zip`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+      toast("Semua slide dimuat turun (ZIP)");
+    } catch (e) {
+      showExportBanner();
+      toast("Gagal jana ZIP. Cuba muat turun satu-satu, atau screenshot manual.");
+    } finally {
+      zipBtn.disabled = false;
+      zipBtn.textContent = original;
+    }
+  });
+
+  document.getElementById("copyCaption").addEventListener("click", async () => {
+    const text = DATA.caption || slides.map(s => `Slide ${s.number}: ${s.headline || s.quote || s.stat_label || ""}`).join("\n");
+    try { await navigator.clipboard.writeText(text); toast("Caption disalin"); }
+    catch (e) {
+      const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); toast("Caption disalin"); } catch (e2) { toast("Tak dapat salin. Pilih teks secara manual."); }
+      ta.remove();
+    }
+  });
+})();
+</script>
+</body>
+</html>

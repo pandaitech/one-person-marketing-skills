@@ -1,6 +1,6 @@
 # Prompt Task 2 — Laporan iklan
 
-Ini Task 2 dari had 5 task berjadual ChatGPT (lesson 01.9). Satu task sahaja untuk semua iklan — jangan buat satu task setiap iklan atau satu task setiap campaign.
+Ini Task 2 dari had 5 task berjadual ChatGPT (lesson 01.11). Satu task sahaja untuk semua iklan — jangan buat satu task setiap iklan atau satu task setiap campaign.
 
 ## Task 2 biasa (Laporan iklan sahaja)
 

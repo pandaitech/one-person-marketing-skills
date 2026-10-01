@@ -1,0 +1,138 @@
+/* edit.css — the recipe editor shell (#/edit/<id>): header, recipe strip, preview, lanes, right
+   panel scaffolding. Cut + Moments step internals live in edit-parts.css. Uses the tokens and base
+   components from styles.css (--bg, --panel, --accent, .btn, .seg, .pill, .chip, .field, ...).
+   All classes here are prefixed `.ed-`. */
+
+.view-edit { display: flex; flex-direction: column; gap: 14px; }
+
+/* ---- header ---------------------------------------------------------------- */
+
+.ed-header h2 { margin: 0; font-size: 15px; }
+.ed-mode-switch .seg-btn { text-decoration: none; }
+
+/* ---- recipe strip ------------------------------------------------------------ */
+
+.ed-strip-row { overflow-x: auto; padding-bottom: 4px; }
+.ed-strip { display: flex; align-items: stretch; gap: 6px; min-width: max-content; }
+.ed-step-card {
+  appearance: none; text-align: left; cursor: pointer;
+  background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 10px 14px; min-width: 150px; max-width: 200px; color: var(--text); font: inherit;
+  display: flex; flex-direction: column; gap: 3px; position: relative;
+}
+.ed-step-card:hover { border-color: #3a3e46; }
+.ed-step-card.active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--panel)); }
+.ed-step-num { font-size: 11px; color: var(--muted); font-weight: 700; }
+.ed-step-name { font-size: 15px; font-weight: 650; color: var(--text); }
+.ed-step-summary { font-size: 11.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ed-step-dot { position: absolute; top: 10px; right: 10px; width: 7px; height: 7px; border-radius: 50%; }
+.ed-dot-green { background: var(--green); }
+.ed-dot-amber { background: var(--amber); }
+.ed-arrow { display: flex; align-items: center; color: var(--muted); font-size: 14px; flex-shrink: 0; }
+.ed-render-btn {
+  appearance: none; cursor: pointer; border: none; border-radius: var(--radius);
+  padding: 8px 18px; font-weight: 600; white-space: nowrap; flex-shrink: 0;
+}
+.ed-render-btn.active { outline: 2px solid var(--accent-ink); outline-offset: -4px; }
+.ed-render-btn.ed-rendering { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+/* ---- layout: left preview+lanes / right step panel --------------------------- */
+
+.ed-layout { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 16px; align-items: start; }
+.ed-left { display: flex; flex-direction: column; gap: 10px; }
+
+.ed-preview { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.ed-preview-toggle { align-self: center; }
+.ed-preview-frame { width: 100%; }
+.ed-preview-empty { display: flex; align-items: center; justify-content: center; height: 100%; padding: 24px; text-align: center; color: var(--muted); font-size: 12.5px; }
+
+.ed-draft-wrap { position: relative; width: 100%; aspect-ratio: 9 / 16; background: #000; border-radius: 10px; overflow: hidden; }
+.ed-draft-img { width: 100%; height: 100%; object-fit: contain; display: block; background: #000; }
+.ed-draft-spinner {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.35); color: var(--text); font-size: 12px;
+}
+.ed-draft-label {
+  position: absolute; left: 8px; bottom: 8px; background: rgba(0,0,0,0.6); color: var(--amber);
+  font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
+}
+
+.ed-transport { display: flex; align-items: center; gap: 8px; width: 100%; }
+.ed-scrub { flex: 1; accent-color: var(--accent); }
+.ed-time { white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+.ed-lanes-wrap { position: relative; }
+.ed-lanes { display: flex; flex-direction: column; gap: 3px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel); padding: 6px; }
+.ed-lane { display: flex; align-items: center; gap: 6px; }
+.ed-lane-label { width: 58px; flex-shrink: 0; text-align: right; }
+.ed-lane-body { position: relative; flex: 1; height: 18px; background: var(--panel-2); border-radius: 4px; cursor: pointer; overflow: hidden; }
+.ed-lane-block {
+  position: absolute; top: 1px; bottom: 1px; border-radius: 3px; cursor: pointer;
+  font-size: 9px; color: var(--accent-ink); overflow: hidden; white-space: nowrap; padding: 0 3px;
+  display: flex; align-items: center;
+}
+.ed-cut-block { background: var(--accent); }
+.ed-caption-block { background: var(--blue); }
+.ed-text-block { background: var(--amber); }
+.ed-moment-block { background: #b06bd8; color: #fff; }
+.ed-lane-dot {
+  position: absolute; top: 50%; width: 6px; height: 6px; margin-top: -3px; margin-left: -3px;
+  border-radius: 50%; background: var(--green); cursor: pointer;
+}
+.ed-sound-dot.ed-muted { background: var(--grey); }
+.ed-lanes-playhead {
+  /* Inset to match where the lane bodies start: .ed-lanes padding (6px) + label width (58px) +
+     the row's gap (6px) = 70px from the left edge of .ed-lanes-wrap, mirrored 6px on the right.
+     The inner bar's `left` is then set in JS as a plain 0-100% of *this* box's width, matching
+     the lane-item percentages (which are also relative to the lane-body width). */
+  position: absolute; top: 6px; bottom: 6px; left: 70px; right: 6px; pointer-events: none;
+}
+.ed-lanes-playhead-bar {
+  position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px;
+  background: #fff; box-shadow: 0 0 4px rgba(255,255,255,0.6);
+}
+
+/* ---- right panel: step editor + ask-claude ------------------------------------ */
+
+.ed-right { display: flex; flex-direction: column; min-height: 480px; }
+.ed-step-title { font-size: 14px; font-weight: 700; }
+.ed-save-status { min-height: 16px; }
+.ed-save-status.ed-save-err { color: var(--red); }
+.ed-step-mount { flex: 1; min-height: 0; overflow-y: auto; padding: 12px; }
+.ed-step-panel { display: flex; flex-direction: column; gap: 12px; }
+
+.ed-card { border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: var(--panel-2); display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.ed-card-head { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+
+.ed-word-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.ed-word-chip { cursor: pointer; }
+.ed-word-chip.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+
+.ed-dim-row { padding: 4px 0; }
+
+.ed-caption-row { display: flex; align-items: flex-start; gap: 8px; }
+.ed-caption-time { width: 48px; flex-shrink: 0; padding-top: 6px; }
+.ed-caption-row .textarea { flex: 1; min-height: 32px; }
+
+.ed-sfx-row { padding: 4px 0; border-bottom: 1px solid var(--border); }
+.ed-sfx-row:last-child { border-bottom: none; }
+
+.ed-change-list { margin: 0; padding-left: 18px; font-size: 12.5px; }
+.ed-change-list li { margin: 2px 0; }
+
+.ed-progress { height: 6px; border-radius: 4px; background: var(--panel-2); overflow: hidden; margin-top: 4px; }
+.ed-progress-bar { height: 100%; background: var(--blue); transition: width 0.3s; }
+
+.ed-ask-wrap { border-top: 1px solid var(--border); padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+.ed-ask-claude { display: flex; gap: 8px; align-items: flex-end; }
+.ed-ask-claude .textarea { flex: 1; }
+
+@media (max-width: 1100px) {
+  .ed-layout { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Keep the lanes on screen: size the 9:16 preview from the window height, not the column width. */
+.view-edit .phone-frame { max-width: calc((100vh - 480px) * 9 / 16 + 14px); min-width: 180px; }
+.view-edit .player-frame.aspect-9x16 { max-height: calc(100vh - 480px); min-height: 300px; }
+.view-edit .ed-draft-wrap { width: auto; height: calc(100vh - 480px); min-height: 300px; margin: 0 auto; }
+.ed-render-btn.ed-up-to-date { background: var(--panel); color: var(--muted); border: 1px solid var(--border); }

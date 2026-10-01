@@ -6,6 +6,8 @@ Fail brain mesti ikut struktur ini dengan tepat. Panel `assets/brain.html` memba
 
 - Baris pertama: `# Marketing Brain: <Nama bisnes>`
 - Baris kedua: `Dikemas kini: YYYY-MM-DD`
+- Baris ketiga: `Runtime diproses sehingga: YYYY-MM-DD` — checkpoint mod "Kemas kini brain dari runtime" (skill `marketing-brain`). Tarikh entri runtime terakhir yang sudah diproses masuk brain. Brain baharu yang belum pernah proses runtime: tulis `Runtime diproses sehingga: (belum ada)`.
+- **Had saiz: lebih kurang 1,500 perkataan.** Brain ialah rumusan, bukan arkib — bila kemas kini (manual atau daripada runtime) buat brain lebih panjang daripada had ini, mampat/gabung ayat berulang dan buang entri Pengajaran (bahagian 7) yang paling lama dahulu sehingga kembali bawah had. Jangan buang fakta bahagian 1–6 semata-mata sebab had saiz — mampatkan ayat, bukan buang fakta.
 - Lapan bahagian `##` dengan nombor dan nama **tepat** seperti templat di bawah, dalam susunan yang sama. Jangan tambah atau buang bahagian.
 - Dalam setiap bahagian, guna senarai `- **Label:** nilai`. Subtajuk `###` dibenarkan (contohnya satu `###` untuk setiap produk).
 - Penanda ketidakpastian: tambah `(belum pasti)` di hujung baris. Setiap baris yang ditanda juga disenaraikan dalam bahagian 8.
@@ -19,6 +21,7 @@ Fail brain mesti ikut struktur ini dengan tepat. Panel `assets/brain.html` memba
 ```markdown
 # Marketing Brain: <Nama bisnes>
 Dikemas kini: YYYY-MM-DD
+Runtime diproses sehingga: YYYY-MM-DD
 
 ## 1. Bisnes
 - **Apa yang dijual:** <satu ayat>
